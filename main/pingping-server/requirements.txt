@@ -2,7 +2,13 @@
 torch==2.2.2
 torchaudio==2.2.2
 numpy==1.26.4
-# Whisper ASR dependencies (for OpenAI Whisper via Hugging Face)
+# Whisper ASR dependencies
+# For streaming ASR, install SimulStreaming:
+#   git clone https://github.com/ufal/SimulStreaming.git
+#   cd SimulStreaming
+#   pip install -r requirements.txt
+#   pip install -e .
+# Or use transformers as fallback (non-streaming):
 transformers>=4.30.0
 accelerate>=0.20.0
 datasets[audio]>=2.14.0

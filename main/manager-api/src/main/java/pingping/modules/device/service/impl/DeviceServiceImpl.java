@@ -452,6 +452,20 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
 
     @Override
     public void manualAddDevice(Long userId, DeviceManualAddDTO dto) {
+        // 验证必填字段
+        if (StringUtils.isBlank(dto.getAgentId())) {
+            throw new RenException(ErrorCode.PARAMS_GET_ERROR, "智能体ID不能为空");
+        }
+        if (StringUtils.isBlank(dto.getMacAddress())) {
+            throw new RenException(ErrorCode.MCA_NOT_NULL);
+        }
+        if (StringUtils.isBlank(dto.getBoard())) {
+            throw new RenException(ErrorCode.PARAMS_GET_ERROR, "设备型号不能为空");
+        }
+        if (StringUtils.isBlank(dto.getAppVersion())) {
+            throw new RenException(ErrorCode.PARAMS_GET_ERROR, "固件版本不能为空");
+        }
+        
         // 检查mac是否已存在
         QueryWrapper<DeviceEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("mac_address", dto.getMacAddress());
@@ -459,6 +473,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
         if (exist != null) {
             throw new RenException(ErrorCode.MAC_ADDRESS_ALREADY_EXISTS);
         }
+        
         Date now = new Date();
         DeviceEntity entity = new DeviceEntity();
         entity.setId(dto.getMacAddress());

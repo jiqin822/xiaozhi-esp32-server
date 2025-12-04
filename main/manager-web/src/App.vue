@@ -6,30 +6,42 @@
 </template>
 
 <style lang="scss">
+@import './styles/theme.scss';
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Kalam', 'Caveat', cursive, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  min-height: 100vh;
+  @include paper-texture;
+  color: $pen-black;
 }
 
 nav {
   padding: 30px;
 
   a {
-    font-weight: bold;
-    color: #2c3e50;
+    font-weight: 500;
+    color: $pen-black;
+    text-decoration: none;
+    transition: color 0.3s;
+    letter-spacing: 0.5px;
+
+    &:hover {
+      color: $pen-blue;
+    }
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: $pen-blue;
+      border-bottom: 2px solid $pen-blue;
+      padding-bottom: 4px;
     }
   }
 }
 
 .copyright {
   text-align: center;
-  color: rgb(0, 0, 0);
+  color: $text-secondary;
   font-size: 12px;
   font-weight: 400;
   margin-top: auto;

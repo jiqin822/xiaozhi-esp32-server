@@ -24,7 +24,7 @@ export default {
             }).send()
     },
     // 获取验证码
-    getCaptcha(uuid, callback) {
+    getCaptcha(uuid, callback, failCallback) {
         RequestService.sendRequest()
             .url(`${getServiceUrl()}/user/captcha?uuid=${uuid}`)
             .method('GET')
@@ -38,8 +38,21 @@ export default {
                 RequestService.clearRequestTime();
                 callback(res);
             })
-            .networkFail((err) => {  // 添加错误参数
-
+            .fail((err) => {
+                RequestService.clearRequestTime();
+                if (failCallback) {
+                    failCallback(err);
+                } else {
+                    console.error('获取验证码失败:', err);
+                }
+            })
+            .networkFail((err) => {
+                RequestService.clearRequestTime();
+                if (failCallback) {
+                    failCallback(err);
+                } else {
+                    console.error('网络请求失败:', err);
+                }
             }).send()
     },
     // 发送短信验证码

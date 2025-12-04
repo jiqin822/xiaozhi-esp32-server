@@ -202,7 +202,7 @@ export default {
   'firmwareDialog.firmwareFile': 'Firmware-Datei',
   'firmwareDialog.clickUpload': 'Zum Hochladen klicken',
   'firmwareDialog.uploadTip': 'Nur Firmware-Dateien (.bin/.apk) werden unterstützt, Größe sollte 100MB nicht überschreiten',
-  'firmwareDialog.uploadHint': 'Hinweis: Bitte die vorab zusammengeführte xiaozhi.bin-Datei hochladen, nicht die zusammengeführte merged-binary.bin-Datei',
+  'firmwareDialog.uploadHint': 'Hinweis: Bitte die vorab zusammengeführte pingping.bin-Datei hochladen, nicht die zusammengeführte merged-binary.bin-Datei',
   'firmwareDialog.remark': 'Bemerkung',
   'firmwareDialog.remarkPlaceholder': 'Bitte Bemerkungsinformationen eingeben',
   'firmwareDialog.requiredFirmwareName': 'Bitte Firmware-Namen eingeben (Board + Version)',
@@ -276,7 +276,7 @@ export default {
 
   // Register page related
   'register.title': 'Konto erstellen',
-  'register.welcome': 'Willkommen bei XiaoZhi AI',
+  'register.welcome': 'Willkommen bei PingPing AI',
   'register.usernamePlaceholder': 'Bitte Benutzernamen eingeben',
   'register.mobilePlaceholder': 'Bitte Handynummer eingeben',
   'register.captchaPlaceholder': 'Bitte Captcha eingeben',
@@ -512,7 +512,7 @@ export default {
   'button.close': 'Schließen',
 
   // System information
-  'system.name': 'XiaoZhi Service',
+  'system.name': 'PingPing Service',
 
   // Voiceprint related
   'voiceprint.management': 'Stimmabdruckverwaltung',
@@ -644,7 +644,7 @@ export default {
 
   // Home page text
   'home.addAgent': 'Agent hinzufügen',
-  'home.greeting': 'Hallo XiaoZhi',
+  'home.greeting': 'Erstellen Sie hier neue Pingpings!',
   'home.wish': 'Lassen Sie uns einen wunderbaren Tag haben!',
   'home.languageModel': 'LLM',
   'home.voiceModel': 'TTS',

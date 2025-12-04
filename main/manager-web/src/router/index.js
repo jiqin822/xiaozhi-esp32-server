@@ -216,6 +216,15 @@ router.beforeEach((to, from, next) => {
       return
     }
   }
+  
+  // 如果访问根路径且未登录，检查是否应该重定向到注册页
+  if (to.path === '/' && !localStorage.getItem('token')) {
+    // 需要先获取配置来判断是否允许注册
+    // 这里先允许通过，在login.vue的mounted中处理重定向
+    next()
+    return
+  }
+  
   next()
 })
 

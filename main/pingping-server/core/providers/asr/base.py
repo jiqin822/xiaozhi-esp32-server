@@ -66,11 +66,23 @@ class ASRProviderBase(ABC):
 
         if conn.client_voice_stop:
             asr_audio_task = conn.asr_audio.copy()
+            audio_chunk_count = len(asr_audio_task)
             conn.asr_audio.clear()
             conn.reset_vad_states()
 
-            if len(asr_audio_task) > 15:
+            # Lower threshold from 15 to 5 to process shorter speech segments
+            # This helps capture speech even if VAD cuts off early
+            if audio_chunk_count > 5:
+                logger.bind(tag=TAG).debug(
+                    f"Processing ASR: audio_chunks={audio_chunk_count}, "
+                    f"estimated_duration={audio_chunk_count * 0.06:.2f}s (assuming 60ms per chunk)"
+                )
                 await self.handle_voice_stop(conn, asr_audio_task)
+            else:
+                logger.bind(tag=TAG).warning(
+                    f"ASR audio too short: {audio_chunk_count} chunks (minimum 5 required). "
+                    f"This may indicate VAD is cutting off speech too early."
+                )
 
     # 处理语音停止
     async def handle_voice_stop(self, conn, asr_audio_task: List[bytes]):
@@ -78,18 +90,37 @@ class ASRProviderBase(ABC):
         try:
             total_start_time = time.monotonic()
             
-            # 准备音频数据
-            if conn.audio_format == "pcm":
-                pcm_data = asr_audio_task
-            else:
-                pcm_data = self.decode_opus(asr_audio_task)
+            # 获取ASR超时配置，默认30秒
+            asr_timeout = int(conn.config.get("asr_timeout", 30))
             
-            combined_pcm_data = b"".join(pcm_data)
+            # 准备音频数据
+            try:
+                if conn.audio_format == "pcm":
+                    pcm_data = asr_audio_task
+                else:
+                    pcm_data = self.decode_opus(asr_audio_task)
+                
+                if not pcm_data:
+                    logger.bind(tag=TAG).warning("解码后的音频数据为空")
+                    return
+                
+                combined_pcm_data = b"".join(pcm_data)
+                
+                if not combined_pcm_data:
+                    logger.bind(tag=TAG).warning("合并后的音频数据为空")
+                    return
+            except Exception as e:
+                logger.bind(tag=TAG).error(f"音频数据准备失败: {type(e).__name__}: {e}")
+                raise
             
             # 预先准备WAV数据
             wav_data = None
             if conn.voiceprint_provider and combined_pcm_data:
-                wav_data = self._pcm_to_wav(combined_pcm_data)
+                try:
+                    wav_data = self._pcm_to_wav(combined_pcm_data)
+                except Exception as e:
+                    logger.bind(tag=TAG).warning(f"WAV数据准备失败(声纹识别可能不可用): {e}")
+                    wav_data = None
             
             # 定义ASR任务
             def run_asr():
@@ -138,13 +169,50 @@ class ASRProviderBase(ABC):
                     voiceprint_future = thread_executor.submit(run_voiceprint)
                     
                     # 等待两个线程都完成
-                    asr_result = asr_future.result(timeout=15)
-                    voiceprint_result = voiceprint_future.result(timeout=15)
-                    
-                    results = {"asr": asr_result, "voiceprint": voiceprint_result}
+                    try:
+                        asr_result = asr_future.result(timeout=asr_timeout)
+                        voiceprint_result = voiceprint_future.result(timeout=asr_timeout)
+                        results = {"asr": asr_result, "voiceprint": voiceprint_result}
+                    except concurrent.futures.TimeoutError:
+                        logger.bind(tag=TAG).error(f"ASR或声纹识别超时({asr_timeout}秒)")
+                        # 如果超时，检查是否已完成，如果已完成则获取结果，否则返回空结果
+                        if asr_future.done():
+                            try:
+                                asr_result = asr_future.result()  # No timeout since it's done
+                            except Exception as e:
+                                logger.bind(tag=TAG).warning(f"获取ASR结果失败: {e}")
+                                asr_result = ("", None)
+                        else:
+                            asr_result = ("", None)
+                            logger.bind(tag=TAG).warning("ASR任务未完成，返回空结果")
+                        
+                        if voiceprint_future.done():
+                            try:
+                                voiceprint_result = voiceprint_future.result()  # No timeout since it's done
+                            except Exception as e:
+                                logger.bind(tag=TAG).warning(f"获取声纹识别结果失败: {e}")
+                                voiceprint_result = None
+                        else:
+                            voiceprint_result = None
+                        
+                        results = {"asr": asr_result, "voiceprint": voiceprint_result}
                 else:
-                    asr_result = asr_future.result(timeout=15)
-                    results = {"asr": asr_result, "voiceprint": None}
+                    try:
+                        asr_result = asr_future.result(timeout=asr_timeout)
+                        results = {"asr": asr_result, "voiceprint": None}
+                    except concurrent.futures.TimeoutError:
+                        logger.bind(tag=TAG).error(f"ASR处理超时({asr_timeout}秒)")
+                        # 如果超时，检查是否已完成，如果已完成则获取结果，否则返回空结果
+                        if asr_future.done():
+                            try:
+                                asr_result = asr_future.result()  # No timeout since it's done
+                            except Exception as e:
+                                logger.bind(tag=TAG).warning(f"获取ASR结果失败: {e}")
+                                asr_result = ("", None)
+                        else:
+                            asr_result = ("", None)
+                            logger.bind(tag=TAG).warning("ASR任务未完成，返回空结果")
+                        results = {"asr": asr_result, "voiceprint": None}
             
             
             # 处理结果
@@ -186,7 +254,13 @@ class ASRProviderBase(ABC):
             
             # 检查文本长度
             text_len, _ = remove_punctuation_and_length(raw_text)
-            self.stop_ws_connection()
+            
+            # 安全调用stop_ws_connection (某些ASR提供商可能没有此方法)
+            try:
+                if hasattr(self, 'stop_ws_connection'):
+                    self.stop_ws_connection()
+            except Exception as e:
+                logger.bind(tag=TAG).debug(f"stop_ws_connection调用失败(可忽略): {e}")
             
             if text_len > 0:
                 # 构建包含说话人信息的JSON字符串
@@ -197,9 +271,14 @@ class ASRProviderBase(ABC):
                 enqueue_asr_report(conn, enhanced_text, asr_audio_task)
                 
         except Exception as e:
-            logger.bind(tag=TAG).error(f"处理语音停止失败: {e}")
-            import traceback
-            logger.bind(tag=TAG).debug(f"异常详情: {traceback.format_exc()}")
+            error_msg = str(e) if e else "Unknown error"
+            error_type = type(e).__name__
+            logger.bind(tag=TAG).error(
+                f"处理语音停止失败: {error_type}: {error_msg}"
+            )
+            logger.bind(tag=TAG).error(
+                f"异常详情: {traceback.format_exc()}"
+            )
 
     def _build_enhanced_text(self, text: str, speaker_name: Optional[str]) -> str:
         """构建包含说话人信息的文本"""

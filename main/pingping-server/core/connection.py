@@ -84,6 +84,8 @@ class ConnectionHandler:
         self.max_output_size = 0
         self.chat_history_conf = 0
         self.audio_format = "opus"
+        self.agent_id = None  # Agent ID for this connection
+        self.agent_name = None  # Agent name for this connection
 
         # Client state related
         self.client_abort = False
@@ -538,6 +540,14 @@ class ConnectionHandler:
             self.logger.bind(tag=TAG).info(
                 f"{time.time() - begin_time} 秒，获取差异化配置成功: {json.dumps(filter_sensitive_info(private_config), ensure_ascii=False)}"
             )
+            # Debug: Check if agent info is in the response
+            if "agent" in private_config:
+                agent_data = private_config.get('agent')
+                self.logger.bind(tag=TAG).info(f"Agent info found in private_config: {agent_data}")
+            else:
+                self.logger.bind(tag=TAG).warning(
+                    f"Agent info NOT found in private_config response. Available keys: {list(private_config.keys())[:10]}"
+                )
         except DeviceNotFoundException as e:
             self.need_bind = True
             private_config = {}
@@ -620,6 +630,27 @@ class ConnectionHandler:
             self.chat_history_conf = int(private_config["chat_history_conf"])
         if private_config.get("mcp_endpoint", None) is not None:
             self.config["mcp_endpoint"] = private_config["mcp_endpoint"]
+        
+        # Store agent information if available
+        if private_config and private_config.get("agent") is not None:
+            agent_info = private_config.get("agent")
+            if isinstance(agent_info, dict):
+                self.agent_id = agent_info.get("id")
+                self.agent_name = agent_info.get("name")
+                if self.agent_id:
+                    self.logger.bind(tag=TAG).info(
+                        f"设备绑定到智能体: ID={self.agent_id}, Name={self.agent_name}"
+                    )
+                else:
+                    self.logger.bind(tag=TAG).warning(f"Agent info dict exists but ID is empty: {agent_info}")
+            else:
+                self.logger.bind(tag=TAG).warning(f"Agent info is not a dict: {type(agent_info)}, value: {agent_info}")
+        else:
+            if not private_config:
+                self.logger.bind(tag=TAG).warning("private_config is empty or None - cannot extract agent info")
+            else:
+                self.logger.bind(tag=TAG).warning(f"No agent information in private_config. Keys: {list(private_config.keys())}")
+        
         try:
             modules = initialize_modules(
                 self.logger,

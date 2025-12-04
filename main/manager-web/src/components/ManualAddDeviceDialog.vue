@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="$t('manualAddDeviceDialog.title')" :visible="visible" @close="handleClose" width="30%" center>
+  <el-dialog :title="$t('manualAddDeviceDialog.title')" :visible.sync="dialogVisible" @close="handleClose" width="30%" center :append-to-body="true">
     <div class="dialog-content">
       <el-form :model="deviceForm" :rules="rules" ref="deviceForm" label-width="auto">
         <el-form-item :label="$t('manualAddDeviceDialog.deviceType')" prop="board">
@@ -34,7 +34,7 @@ export default {
   name: 'ManualAddDeviceDialog',
   props: {
     visible: { type: Boolean, required: true },
-    agentId: { type: String, required: true }
+    agentId: { type: String, required: false, default: '' }
   },
   data() {
     // MAC地址验证规则
@@ -69,8 +69,31 @@ export default {
       }
     }
   },
+  computed: {
+    dialogVisible: {
+      get() {
+        return this.visible;
+      },
+      set(val) {
+        this.$emit('update:visible', val);
+      }
+    }
+  },
   created() {
     this.getFirmwareTypes();
+  },
+  watch: {
+    visible(newVal) {
+      if (newVal) {
+        console.log('ManualAddDeviceDialog opened with agentId:', this.agentId);
+        // Reset form when dialog opens
+        this.$nextTick(() => {
+          if (this.$refs.deviceForm) {
+            this.$refs.deviceForm.resetFields();
+          }
+        });
+      }
+    }
   },
   methods: {
     async getFirmwareTypes() {
@@ -90,6 +113,10 @@ export default {
       });
     },
     addDevice() {
+      if (!this.agentId) {
+        this.$message.error(this.$t('manualAddDeviceDialog.agentIdRequired') || 'Agent ID is required');
+        return;
+      }
       const params = {
         agentId: this.agentId,
         ...this.deviceForm
@@ -146,6 +173,12 @@ export default {
 ::v-deep .el-dialog {
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2001;
+}
+
+::v-deep .el-dialog__wrapper {
+  z-index: 2000 !important;
 }
 
 ::v-deep .el-dialog__body {

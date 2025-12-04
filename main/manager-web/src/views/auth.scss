@@ -1,49 +1,82 @@
+@import '../styles/theme.scss';
+
+// Responsive breakpoints
+$breakpoint-mobile: 576px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 992px;
+$breakpoint-large: 1200px;
+
 .welcome {
-  min-width: 1200px;
-  min-height: 675px;
+  // Remove fixed min-width for mobile support
+  min-height: 100vh;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #f5f8fd, #6baaff, #9ebbfc, #f5f8fd);
-  background-size: cover;
-  /* 确保背景图像覆盖整个元素 */
-  background-position: center;
-  /* 从顶部中心对齐 */
-  -webkit-background-size: cover;
-  /* 兼容老版本WebKit浏览器 */
-  -o-background-size: cover;
-  /* 兼容老版本Opera浏览器 */
+  @include paper-texture;
+  position: relative;
+  overflow: hidden;
+  padding: 1rem;
+  box-sizing: border-box;
+  
+  // Subtle notebook lines effect
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    @include notebook-lines;
+    opacity: 0.3;
+    pointer-events: none;
+  }
 }
 
 .login-text {
-  font-weight: 700;
-  font-size: 25px;
+  font-weight: 500;
+  // Responsive font size using clamp
+  font-size: clamp(1.5rem, 4vw, 1.75rem);
   text-align: left;
-  color: #3d4566;
+  color: $pen-black;
   white-space: nowrap;
   flex-shrink: 0;
+  letter-spacing: 0.5px;
 }
 
 .login-welcome {
   font-weight: 400;
-  font-size: 9px;
+  // Responsive font size
+  font-size: clamp(0.625rem, 2vw, 0.75rem);
   text-align: left;
-  color: #818cae;
+  color: $text-secondary;
   align-self: flex-end;
-  margin-bottom: 7px;
+  margin-bottom: 0.4375rem;
+  font-style: italic;
 }
 
 .login-box {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 15%;
-  background-color: #fff;
-  border-radius: 20px;
-  padding: 35px 0;
-  width: 550px;
+  // Use relative positioning with flexbox centering for better responsive behavior
+  position: relative;
+  @include material-card(4);
+  background: $paper-off-white !important;
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  // Responsive padding
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0;
+  // Responsive width using clamp and percentage
+  width: 100%;
+  max-width: clamp(320px, 90vw, 550px);
   box-sizing: border-box;
+  border: 2px solid $pen-blue;
+  z-index: 10;
+  // Center using margin auto
+  margin: auto;
+  
+  // Ensure proper spacing on all sides
+  @media (max-width: $breakpoint-mobile) {
+    padding: 1.25rem 0;
+    border-radius: 0.75rem;
+  }
 }
 
 .el-dropdown-link {
@@ -54,33 +87,71 @@
 }
 
 .input-icon {
-  width: 19px;
-  height: 22px;
+  // Responsive icon size
+  width: clamp(17px, 2.5vw, 19px);
+  height: clamp(20px, 3vw, 22px);
   flex-shrink: 0;
 }
 
 .login-btn {
-  height: 35px;
-  background: #5778ff;
-  border-radius: 10px;
-  font-weight: 400;
-  font-size: 14px;
+  @include material-button($pen-blue);
+  // Responsive height
+  height: clamp(44px, 6vw, 48px);
+  border-radius: clamp(0.375rem, 1vw, 0.5rem);
+  font-weight: 500;
+  // Responsive font size
+  font-size: clamp(0.8125rem, 2vw, 0.875rem);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   cursor: pointer;
   color: #fff;
-  line-height: 35px;
-  margin: 15px 30px 15px 30px;
+  line-height: clamp(44px, 6vw, 48px);
+  // Responsive margins using clamp
+  margin: clamp(1rem, 3vw, 1.25rem) clamp(1rem, 4vw, 1.875rem);
+  // Use calc with percentage for responsive width
+  width: calc(100% - clamp(2rem, 8vw, 3.75rem));
+  box-sizing: border-box;
+  display: block;
+  // Ensure button doesn't exceed container
+  max-width: 100%;
 }
 
 .input-box {
   display: flex;
-  margin-top: 20px;
+  // Responsive margin
+  margin-top: clamp(1rem, 3vw, 1.25rem);
   align-items: center;
-  border-radius: 10px;
-  background: #f6f8fb;
-  border: 1px solid #e4e6ef;
-  height: 40px;
-  padding: 0 15px;
-  gap: 20px;
+  border-radius: clamp(0.375rem, 1vw, 0.5rem);
+  background: $paper-off-white;
+  border: 1px solid rgba(30, 144, 255, 0.2);
+  // Responsive height
+  height: clamp(44px, 6vw, 48px);
+  // Responsive padding
+  padding: 0 clamp(0.875rem, 2.5vw, 1rem);
+  // Responsive gap
+  gap: clamp(0.875rem, 2.5vw, 1rem);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: $elevation-1;
+  // Ensure content doesn't overflow
+  overflow: hidden;
+  box-sizing: border-box;
+  // Ensure input box doesn't exceed container
+  width: 100%;
+  max-width: 100%;
+  
+  &:focus-within {
+    border-color: $pen-blue;
+    box-shadow: $elevation-2;
+    background: $paper-off-white;
+  }
+  
+  // Ensure el-input takes available space but doesn't overflow
+  :deep(.el-input) {
+    flex: 1;
+    min-width: 0; // Allows flex item to shrink below content size
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 ::v-deep {
@@ -111,23 +182,203 @@
   }
 
   .el-tabs__nav-scroll {
-    padding: 0 30px;
+    // Responsive padding
+    padding: 0 clamp(1rem, 4vw, 1.875rem);
   }
 
   .el-input__inner {
     border: none;
     background-color: transparent;
-    height: 56px;
+    // Responsive height
+    height: clamp(48px, 7vw, 56px);
     padding: 0;
+    // Responsive font size
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+    // Ensure input doesn't overflow
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    // Prevent text overflow
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    // Make placeholder text match background color
+    &::placeholder {
+      color: $paper-off-white;
+    }
+  }
+  
+  // Ensure input wrapper doesn't overflow
+  .el-input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
 .login-person {
-  width: 500px;
+  // Responsive width
+  width: clamp(200px, 40vw, 500px);
   color: #fff;
   position: absolute;
   top: 50%;
   left: 25%;
   transform: translate(-50%, -50%);
   z-index: 1;
+  
+  // Hide on mobile/tablet for better UX
+  @media (max-width: $breakpoint-tablet) {
+    display: none;
+  }
+}
+
+// Responsive adjustments for login box content
+@media (max-width: $breakpoint-mobile) {
+  .login-box {
+    // Full width on very small screens with small padding
+    max-width: calc(100% - 1rem);
+    padding: 1.25rem 0;
+  }
+  
+  .login-text {
+    font-size: 1.5rem;
+  }
+  
+  .login-welcome {
+    font-size: 0.625rem;
+  }
+}
+
+@media (min-width: $breakpoint-mobile) and (max-width: $breakpoint-tablet) {
+  .login-box {
+    max-width: 90%;
+    padding: 2rem 0;
+  }
+}
+
+@media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop) {
+  .login-box {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: $breakpoint-desktop) {
+  .login-box {
+    max-width: 550px;
+  }
+}
+
+// Responsive helper classes for template elements
+.login-type-container {
+  // Responsive margins
+  margin: clamp(0.5rem, 2vw, 0.625rem) clamp(1rem, 3vw, 1.25rem);
+  display: flex;
+  justify-content: center;
+}
+
+.login-box-header {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 1.25rem);
+  margin-bottom: clamp(1.5rem, 4vw, 2.4375rem);
+  padding: 0 clamp(1rem, 4vw, 1.875rem);
+  
+  @media (max-width: $breakpoint-mobile) {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+.login-box-content {
+  padding: 0 clamp(1rem, 4vw, 1.875rem);
+  // Ensure content doesn't overflow
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.login-header-logo {
+  width: clamp(30px, 4vw, 45px);
+  height: clamp(30px, 4vw, 45px);
+}
+
+.login-header-brand {
+  height: clamp(14px, 2.5vw, 18px);
+}
+
+.login-hi-icon {
+  width: clamp(28px, 4vw, 34px);
+  height: clamp(28px, 4vw, 34px);
+}
+
+.captcha-container {
+  display: flex;
+  align-items: center;
+  margin-top: clamp(1rem, 3vw, 1.25rem);
+  width: 100%;
+  gap: clamp(0.5rem, 2vw, 0.625rem);
+  
+  .input-box {
+    width: calc(100% - clamp(130px, 20vw, 150px));
+    margin-top: 0;
+  }
+  
+  @media (max-width: $breakpoint-mobile) {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .input-box {
+      width: 100%;
+    }
+  }
+}
+
+.captcha-image {
+  width: clamp(120px, 18vw, 150px);
+  height: clamp(36px, 5vw, 40px);
+  cursor: pointer;
+  flex-shrink: 0;
+  
+  @media (max-width: $breakpoint-mobile) {
+    width: 100%;
+    height: auto;
+    min-height: 40px;
+  }
+}
+
+.mobile-select {
+  width: clamp(180px, 30vw, 220px);
+  margin-right: clamp(0.5rem, 1.5vw, 0.625rem);
+  
+  @media (max-width: $breakpoint-mobile) {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.login-links {
+  font-weight: 400;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  text-align: left;
+  color: #5778ff;
+  display: flex;
+  justify-content: space-between;
+  margin-top: clamp(1rem, 3vw, 1.25rem);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  
+  @media (max-width: $breakpoint-mobile) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.login-header-container {
+  display: flex;
+  align-items: center;
+  margin-top: clamp(0.75rem, 2vw, 0.9375rem);
+  margin-left: clamp(0.5rem, 1.5vw, 0.625rem);
+  gap: clamp(0.5rem, 1.5vw, 0.625rem);
 }

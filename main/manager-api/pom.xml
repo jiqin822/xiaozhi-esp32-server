@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>xiaozhi</groupId>
-    <artifactId>xiaozhi-esp32-api</artifactId>
+    <groupId>pingping</groupId>
+    <artifactId>pingping-esp32-api</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1</version>
-    <name>xiaozhi-esp32-api</name>
-    <description>小智后台管理系统</description>
+    <name>pingping-esp32-api</name>
+    <description>后台管理系统</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -225,6 +225,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <!-- Jackson YAML support for reading config.yaml files -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
         <!-- 阿里云短信sdk -->
         <dependency>

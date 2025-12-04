@@ -72,12 +72,19 @@ export default new Vuex.Store({
     },
     // 添加获取公共配置的 action
     fetchPubConfig({ commit }) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         Api.user.getPubConfig(({ data }) => {
           if (data.code === 0) {
             commit('setPubConfig', data.data);
+            console.log('Public config loaded:', data.data);
+            resolve();
+          } else {
+            console.error('Failed to load pub config:', data);
+            reject(new Error(data.msg || 'Failed to load public config'));
           }
-          resolve();
+        }, (error) => {
+          console.error('Error loading pub config:', error);
+          reject(error);
         });
       });
     }

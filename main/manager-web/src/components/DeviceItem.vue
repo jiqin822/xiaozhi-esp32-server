@@ -5,7 +5,7 @@
         {{ device.agentName }}
       </div>
       <div>
-        <img src="@/assets/home/delete.png" alt="" style="width: 18px;height: 18px;margin-right: 10px;"
+        <img v-if="device.agentId !== 'DEFAULT_AGENT'" src="@/assets/home/delete.png" alt="" style="width: 18px;height: 18px;margin-right: 10px;"
           @click.stop="handleDelete" />
         <el-tooltip class="item" effect="dark" :content="device.systemPrompt" placement="top"
           popper-class="custom-tooltip">
@@ -97,13 +97,19 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
+@import '../styles/theme.scss';
+
 .device-item {
   width: 342px;
-  border-radius: 20px;
-  background: #fafcfe;
+  border-radius: 12px;
+  background: $paper-cream !important;
   padding: 22px;
   box-sizing: border-box;
+  @include material-card(2);
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  position: relative;
+  z-index: 1;
 }
 
 .device-name {
@@ -117,14 +123,24 @@ export default {
 .settings-btn {
   font-weight: 500;
   font-size: 12px;
-  color: #5778ff;
-  background: #e6ebff;
+  color: $pen-blue;
+  background: $paper-cream;
   width: auto;
   padding: 0 12px;
-  height: 21px;
-  line-height: 21px;
+  height: 28px;
+  line-height: 28px;
   cursor: pointer;
   border-radius: 14px;
+  border: 1px solid rgba(30, 144, 255, 0.3);
+  box-shadow: $elevation-1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    background: darken($paper-cream, 2%);
+    box-shadow: $elevation-2;
+    border-color: $pen-blue;
+    transform: translateY(-1px);
+  }
 }
 
 .version-info {

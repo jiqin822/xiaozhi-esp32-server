@@ -611,13 +611,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../styles/theme.scss';
+
 .header {
-  background: #f6fcfe66;
-  border: 1px solid #fff;
-  height: 63px !important;
+  background: $paper-off-white !important;
+  border-bottom: 2px solid $pen-blue !important;
+  height: 64px !important;
   min-width: 900px;
-  /* 设置最小宽度防止过度压缩 */
+  box-shadow: $elevation-2 !important;
   overflow: visible;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $pen-blue, transparent);
+  }
 }
 
 .header-container {
@@ -662,28 +675,42 @@ export default {
 }
 
 .equipment-management {
-  height: 30px;
-  border-radius: 15px;
-  background: #deeafe;
+  height: 36px;
+  border-radius: 18px;
+  background: rgba(30, 144, 255, 0.1);
   display: flex;
   justify-content: center;
   font-size: 14px;
   font-weight: 500;
   gap: 7px;
-  color: #3d4566;
+  color: $pen-black;
   margin-left: 1px;
   align-items: center;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   flex-shrink: 0;
-  /* 防止导航按钮被压缩 */
-  padding: 0 15px;
+  padding: 0 16px;
   position: relative;
+  border: 1px solid rgba(30, 144, 255, 0.2);
+  letter-spacing: 0.3px;
+  
+  &:hover {
+    background: rgba(30, 144, 255, 0.15);
+    box-shadow: $elevation-1;
+    transform: translateY(-1px);
+  }
 }
 
 .equipment-management.active-tab {
-  background: #5778ff !important;
-  color: #fff !important;
+  background: $pen-blue !important;
+  color: white !important;
+  box-shadow: $elevation-2 !important;
+  border-color: $pen-blue !important;
+  
+  &:hover {
+    background: $pen-blue-dark !important;
+    box-shadow: $elevation-3 !important;
+  }
 }
 
 .equipment-management img {
@@ -707,12 +734,13 @@ export default {
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  border: 1px solid #e4e6ef;
+  background: $paper-off-white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: $elevation-3;
   z-index: 1000;
   margin-top: 2px;
+  @include material-card(2);
 }
 
 .search-history-header {
@@ -776,14 +804,21 @@ export default {
 }
 
 .custom-search-input>>>.el-input__inner {
-  height: 18px;
-  border-radius: 9px;
-  background-color: #fff;
-  border: 1px solid #e4e6ef;
-  padding-left: 8px;
-  font-size: 9px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  height: 36px;
+  border-radius: 18px;
+  background-color: $paper-cream;
+  border: 1px solid rgba(30, 144, 255, 0.2);
+  padding-left: 12px;
+  font-size: 13px;
+  box-shadow: $elevation-1;
   width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:focus {
+    border-color: $pen-blue;
+    box-shadow: $elevation-2;
+    background-color: $paper-off-white;
+  }
 }
 
 .search-icon {

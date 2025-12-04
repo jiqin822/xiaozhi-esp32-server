@@ -119,7 +119,8 @@ public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> imp
     @Override
     public List<AgentDTO> getUserAgents(Long userId) {
         QueryWrapper<AgentEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id", userId);
+        // Include user's agents and the default agent
+        wrapper.and(w -> w.eq("user_id", userId).or().eq("id", Constant.DEFAULT_AGENT_ID));
         List<AgentEntity> agents = agentDao.selectList(wrapper);
         return agents.stream().map(agent -> {
             AgentDTO dto = new AgentDTO();

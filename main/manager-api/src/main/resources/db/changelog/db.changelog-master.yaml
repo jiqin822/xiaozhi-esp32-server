@@ -138,6 +138,7 @@ databaseChangeLog:
   - changeSet:
       id: 202505182234
       author: amen
+      validCheckSum: ANY
       changes:
         - sqlFile:
             encoding: utf8
@@ -423,3 +424,10 @@ databaseChangeLog:
         - sqlFile:
             encoding: utf8
             path: classpath:db/changelog/202511131023.sql
+  - changeSet:
+      id: 202511260009
+      author: system
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: classpath:db/changelog/202511260009.sql

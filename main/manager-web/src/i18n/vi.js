@@ -202,7 +202,7 @@ export default {
   'firmwareDialog.firmwareFile': 'Tệp firmware',
   'firmwareDialog.clickUpload': 'Nhấp để tải lên',
   'firmwareDialog.uploadTip': 'Chỉ hỗ trợ tệp firmware (.bin/.apk), kích thước không vượt quá 100MB',
-  'firmwareDialog.uploadHint': 'Nhắc nhở: Vui lòng tải lên tệp xiaozhi.bin đã hợp nhất trước, không phải tệp merged-binary.bin đã hợp nhất',
+  'firmwareDialog.uploadHint': 'Nhắc nhở: Vui lòng tải lên tệp pingping.bin đã hợp nhất trước, không phải tệp merged-binary.bin đã hợp nhất',
   'firmwareDialog.remark': 'Ghi chú',
   'firmwareDialog.remarkPlaceholder': 'Vui lòng nhập thông tin ghi chú',
   'firmwareDialog.requiredFirmwareName': 'Vui lòng nhập tên firmware (board + phiên bản)',
@@ -276,7 +276,7 @@ export default {
 
   // Register page related
   'register.title': 'Tạo tài khoản',
-  'register.welcome': 'Chào mừng đến với XiaoZhi AI',
+  'register.welcome': 'Chào mừng đến với PingPing AI',
   'register.usernamePlaceholder': 'Vui lòng nhập tên đăng nhập',
   'register.mobilePlaceholder': 'Vui lòng nhập số điện thoại di động',
   'register.captchaPlaceholder': 'Vui lòng nhập mã xác minh',
@@ -512,7 +512,7 @@ export default {
   'button.close': 'Đóng',
 
   // System information
-  'system.name': 'Dịch vụ XiaoZhi',
+  'system.name': 'Dịch vụ PingPing',
 
   // Voiceprint related
   'voiceprint.management': 'Quản lý dấu giọng nói',
@@ -644,7 +644,7 @@ export default {
 
   // Home page text
   'home.addAgent': 'Thêm tác nhân',
-  'home.greeting': 'Xin chào XiaoZhi',
+  'home.greeting': 'Tạo Pingpings mới tại đây!',
   'home.wish': 'Chúc bạn một ngày tuyệt vời!',
   'home.languageModel': 'LLM',
   'home.voiceModel': 'TTS',

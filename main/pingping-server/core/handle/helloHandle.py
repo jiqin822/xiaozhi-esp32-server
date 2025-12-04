@@ -58,6 +58,20 @@ async def handleHelloMessage(conn, msg_json):
             # 发送mcp消息，获取tools列表
             asyncio.create_task(send_mcp_tools_list_request(conn))
 
+    # Add agent information to welcome message if available
+    if conn.agent_id:
+        conn.welcome_msg["agent"] = {
+            "id": conn.agent_id,
+            "name": conn.agent_name if conn.agent_name else "Unknown"
+        }
+        conn.logger.bind(tag=TAG).info(f"Adding agent info to welcome message: id={conn.agent_id}, name={conn.agent_name}")
+    else:
+        # Device is not bound to an agent - this is expected for unbound devices
+        if conn.need_bind:
+            conn.logger.bind(tag=TAG).info(f"Device {conn.device_id} is not bound to an agent - agent info not available")
+        else:
+            conn.logger.bind(tag=TAG).warning(f"No agent ID available when sending hello response. agent_id={conn.agent_id}, agent_name={conn.agent_name}, need_bind={conn.need_bind}")
+
     await conn.websocket.send(json.dumps(conn.welcome_msg, ensure_ascii=False))
 
 

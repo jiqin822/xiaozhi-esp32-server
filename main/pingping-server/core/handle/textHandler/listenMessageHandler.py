@@ -24,13 +24,27 @@ class ListenTextMessageHandler(TextMessageHandler):
                 f"客户端拾音模式：{conn.client_listen_mode}"
             )
         if msg_json["state"] == "start":
+            # Start listening: enable continuous ASR processing
             conn.client_have_voice = True
             conn.client_voice_stop = False
+            conn.logger.bind(tag=TAG).info("Listen started: ASR will process audio continuously")
         elif msg_json["state"] == "stop":
+            # Stop listening: finalize ASR and send complete sentence to LLM
             conn.client_have_voice = True
             conn.client_voice_stop = True
+            conn.logger.bind(tag=TAG).info("Listen stopped: finalizing ASR and sending to LLM")
+            # Trigger final ASR processing on accumulated audio
+            # The client_voice_stop flag will cause ASR to finalize and send to LLM
             if len(conn.asr_audio) > 0:
-                await handleAudioMessage(conn, b"")
+                # Directly call receive_audio with an empty audio packet to trigger finalization
+                # This ensures the final accumulated audio is processed and sent to LLM
+                await conn.asr.receive_audio(conn, b"", False)
+            else:
+                # Even if no audio accumulated, ensure voice_stop is processed
+                # This handles the case where audio might have been processed already
+                conn.logger.bind(tag=TAG).warning(
+                    "Listen stop received but no audio accumulated in asr_audio buffer"
+                )
         elif msg_json["state"] == "detect":
             conn.client_have_voice = False
             conn.asr_audio.clear()

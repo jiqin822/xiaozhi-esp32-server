@@ -8,9 +8,6 @@
           <img loading="lazy" alt="" src="@/assets/xiaozhi-ai.png" style="height: 18px;" />
         </div>
       </el-header>
-      <div class="login-person">
-        <img loading="lazy" alt="" src="@/assets/login/register-person.png" style="width: 100%;" />
-      </div>
       <el-main style="position: relative;">
         <form @submit.prevent="retrievePassword">
           <div class="login-box">

@@ -766,22 +766,8 @@ export default {
     }
 }
 
-.edit-btn,
-.delete-btn {
-    margin: 0 8px;
-    color: #7079aa !important;
-    font-size: 12px;
-    padding: 7px 12px;
-    height: 32px;
-    line-height: 1;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-
-    &:hover {
-        color: #5a64b5 !important;
-        transform: translateY(-1px);
-    }
-}
+// Edit and delete buttons now use global ripped tape style from global.scss
+// Local styles removed to use global ripped-tape-button mixin
 
 :deep(.dict-type-header .el-button) {
     min-width: 72px;

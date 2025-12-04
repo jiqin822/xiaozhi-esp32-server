@@ -621,7 +621,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .el-switch {
   height: 23px;
 }
@@ -685,8 +685,7 @@ export default {
       rgba(107, 140, 255, 0.3) 0%,
       rgba(169, 102, 255, 0.3) 25%,
       transparent 60%
-    ),
-    url("../assets/model/model.png") no-repeat center / cover;
+    );
   padding: 16px 0;
   flex-shrink: 0;
   display: flex;
@@ -833,7 +832,7 @@ export default {
   background-color: transparent !important;
 }
 
-.data-table /deep/ .el-table__row {
+.data-table ::v-deep .el-table__row {
   background-color: transparent !important;
 }
 
@@ -902,7 +901,7 @@ export default {
   background: linear-gradient(135deg, #3a8ee6, #5a7cff);
 }
 
-.el-table th /deep/ .el-table__cell {
+.el-table th ::v-deep .el-table__cell {
   overflow: hidden;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1007,10 +1006,34 @@ export default {
   padding-right: 15px !important;
 }
 
+@import '../styles/theme.scss';
+
 .edit-btn,
 .delete-btn {
+  @include ripped-tape-button;
   margin: 0 8px;
-  color: #7079aa !important;
+  color: $pen-black !important;
+  font-weight: 500;
+  
+  // Override Element UI button styles
+  border: none !important;
+  background: #FFFFFF !important;
+  padding: 6px 16px !important;
+  
+  &:hover {
+    background: #FFFFFF !important;
+    color: $pen-blue !important;
+  }
+  
+  &:active {
+    background: #FFFFFF !important;
+  }
+}
+
+.delete-btn {
+  &:hover {
+    color: $pen-red !important;
+  }
 }
 
 ::v-deep .el-table .cell {

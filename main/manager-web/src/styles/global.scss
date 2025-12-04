@@ -1,4 +1,8 @@
-// 覆盖 autofill 样式
+@import './theme.scss';
+
+// Global Material Design Back to School Theme Styles
+
+// Override autofill styles
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -8,15 +12,447 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  -webkit-box-shadow: 0 0 0px 1000px $paper-off-white inset;
   transition: background-color 5000s ease-in-out 0s;
-  background-color: transparent;
+  background-color: $paper-off-white;
+  color: $pen-black;
 }
 
+// Global body and app background with white lined notebook style
+body, #app {
+  @include notebook-paper;
+  min-height: 100vh;
+  font-family: 'Kalam', 'Caveat', cursive, sans-serif;
+  color: $pen-black;
+}
+
+// Apply white lined notebook style to all welcome/page containers
+.welcome {
+  @include notebook-paper;
+  background: #FFFFFF !important;
+  background-image: 
+    // Left margin line (red/pink like a notebook)
+    linear-gradient(
+      to right,
+      rgba(255, 182, 193, 0.4) 0,
+      rgba(255, 182, 193, 0.4) 2px,
+      transparent 2px,
+      transparent 100%
+    ),
+    // Horizontal ruled lines (blue like a notebook)
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(30, 144, 255, 0.15) 28px,
+      rgba(30, 144, 255, 0.15) 29px
+    ) !important;
+  background-size: 100% 100%, 100% 29px !important;
+  position: relative;
+  
+  // Override any gradient backgrounds
+  background: #FFFFFF !important;
+  
+  // Ensure content is above the notebook lines
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Apply notebook paper to main content areas
+.main-wrapper {
+  @include notebook-paper;
+  background: #FFFFFF !important;
+  background-image: 
+    linear-gradient(
+      to right,
+      rgba(255, 182, 193, 0.4) 0,
+      rgba(255, 182, 193, 0.4) 2px,
+      transparent 2px,
+      transparent 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(30, 144, 255, 0.15) 28px,
+      rgba(30, 144, 255, 0.15) 29px
+    ) !important;
+  background-size: 100% 100%, 100% 29px !important;
+  position: relative;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 0;
+  box-shadow: $elevation-2;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.content-area {
+  @include notebook-paper;
+  background: #FFFFFF !important;
+  background-image: 
+    linear-gradient(
+      to right,
+      rgba(255, 182, 193, 0.4) 0,
+      rgba(255, 182, 193, 0.4) 2px,
+      transparent 2px,
+      transparent 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(30, 144, 255, 0.15) 28px,
+      rgba(30, 144, 255, 0.15) 29px
+    ) !important;
+  background-size: 100% 100%, 100% 29px !important;
+  position: relative;
+  padding: 20px 20px 20px 50px; // Extra left padding for margin line
+}
+
+.content-panel {
+  @include notebook-paper;
+  background: #FFFFFF !important;
+  background-image: 
+    linear-gradient(
+      to right,
+      rgba(255, 182, 193, 0.4) 0,
+      rgba(255, 182, 193, 0.4) 2px,
+      transparent 2px,
+      transparent 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(30, 144, 255, 0.15) 28px,
+      rgba(30, 144, 255, 0.15) 29px
+    ) !important;
+  background-size: 100% 100%, 100% 29px !important;
+  position: relative;
+}
+
+// Material Design Typography with handwritten font
+h1, h2, h3, h4, h5, h6 {
+  color: $pen-black;
+  font-family: 'Kalam', 'Caveat', cursive, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+// Apply handwritten font to all text elements
+* {
+  font-family: 'Kalam', 'Caveat', cursive, sans-serif;
+}
+
+// Override for specific elements that need different fonts
+code, pre, .monospace {
+  font-family: 'Courier New', monospace;
+}
+
+// Element UI Overrides for Material Design
 .el-footer {
-  height: 35px !important; /* 使用 !important 确保覆盖默认样式 */
+  height: 35px !important;
+  background: $paper-beige !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
+.el-header {
+  background: $paper-off-white !important;
+  border-bottom: 2px solid $pen-blue !important;
+  box-shadow: $elevation-2 !important;
+}
+
+.el-main {
+  background: transparent !important;
+  padding: 24px !important;
+}
+
+// Material Design Cards with cream paper
+.el-card {
+  @include material-card(2);
+  background: $paper-cream !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  
+  .el-card__header {
+    background: $paper-cream !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    padding: 16px 20px !important;
+    font-weight: 500;
+    color: $pen-black;
+  }
+  
+  .el-card__body {
+    background: $paper-cream !important;
+    padding: 20px !important;
+  }
+}
+
+// Material Design Buttons with cream paper background
+.el-button {
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: $elevation-2 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  
+  // Default button with cream paper
+  background: $paper-cream !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: $pen-black !important;
+  
+  &.el-button--primary {
+    background: $pen-blue !important;
+    border-color: $pen-blue !important;
+    color: white !important;
+    
+    &:hover {
+      background: $pen-blue-dark !important;
+      box-shadow: $elevation-3 !important;
+      transform: translateY(-1px);
+    }
+  }
+  
+  // Secondary buttons with cream paper
+  &.el-button--default {
+    background: $paper-cream !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    color: $pen-black !important;
+    
+    &:hover {
+      background: darken($paper-cream, 3%) !important;
+      box-shadow: $elevation-3 !important;
+    }
+  }
+  
+  &:active {
+    box-shadow: $elevation-1 !important;
+    transform: translateY(1px);
+  }
+  
+  // Text buttons (edit, delete, duplicate) in tables get ripped tape style
+  &.el-button--text {
+    @include ripped-tape-button;
+    background: #FFFFFF !important;
+    border: none !important;
+    padding: 6px 16px !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    margin: 0 8px;
+    
+    &:hover {
+      background: #FFFFFF !important;
+      color: $pen-blue !important;
+    }
+  }
+}
+
+// Global styles for edit and delete buttons with ripped tape effect
+.edit-btn,
+.delete-btn {
+  @include ripped-tape-button;
+  margin: 0 8px;
+  color: $pen-black !important;
+  font-weight: 500;
+  border: none !important;
+  background: #FFFFFF !important;
+  padding: 6px 16px !important;
+  font-family: 'Kalam', 'Caveat', cursive;
+  
+  &:hover {
+    background: #FFFFFF !important;
+    color: $pen-blue !important;
+  }
+  
+  &.delete-btn,
+  &[class*="delete"] {
+    &:hover {
+      color: $pen-red !important;
+    }
+  }
+  
+  &:active {
+    background: #FFFFFF !important;
+  }
+}
+
+// Global styles for edit and delete buttons with ripped tape effect
+.edit-btn,
+.delete-btn {
+  @include ripped-tape-button;
+  margin: 0 8px;
+  color: $pen-black !important;
+  font-weight: 500;
+  border: none !important;
+  background: #FFFFFF !important;
+  padding: 6px 16px !important;
+  font-family: 'Kalam', 'Caveat', cursive;
+  
+  &:hover {
+    background: #FFFFFF !important;
+    color: $pen-blue !important;
+  }
+  
+  &.delete-btn,
+  &[class*="delete"] {
+    &:hover {
+      color: $pen-red !important;
+    }
+  }
+  
+  &:active {
+    background: #FFFFFF !important;
+  }
+}
+
+// Material Design Inputs with cream paper
+.el-input {
+  .el-input__inner {
+    @include material-input;
+    background: $paper-cream !important;
+    
+    &:focus {
+      border-bottom-color: $pen-blue !important;
+      background: $paper-cream !important;
+    }
+  }
+}
+
+.el-textarea {
+  .el-textarea__inner {
+    background: $paper-cream !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    border-radius: 4px !important;
+    padding: 12px !important;
+    
+    &:focus {
+      border-color: $pen-blue !important;
+      box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.1) !important;
+      background: $paper-cream !important;
+    }
+  }
+}
+
+// Material Design Tables with cream paper
+.el-table {
+  background: $paper-cream !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  
+  th {
+    background: $paper-cream !important;
+    color: $pen-black !important;
+    font-weight: 500 !important;
+    border-bottom: 2px solid $pen-blue !important;
+  }
+  
+  td {
+    background: $paper-cream !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  }
+  
+  tr:hover {
+    background: rgba(30, 144, 255, 0.05) !important;
+  }
+}
+
+// Material Design Dialogs with cream paper
+.el-dialog {
+  border-radius: 8px !important;
+  box-shadow: $elevation-5 !important;
+  background: $paper-cream !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  
+  .el-dialog__header {
+    background: $paper-cream !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    padding: 20px 24px !important;
+    
+    .el-dialog__title {
+      color: $pen-black !important;
+      font-weight: 500 !important;
+    }
+  }
+  
+  .el-dialog__body {
+    background: $paper-cream !important;
+    padding: 24px !important;
+    color: $pen-black !important;
+  }
+  
+  .el-dialog__footer {
+    background: $paper-cream !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    padding: 16px 24px !important;
+  }
+}
+
+// Material Design Messages with cream paper
+.el-message {
+  top: 70px !important;
+  border-radius: 4px !important;
+  box-shadow: $elevation-3 !important;
+  background: $paper-cream !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  
+  &.el-message--success {
+    border-left: 4px solid $pen-green !important;
+  }
+  
+  &.el-message--error {
+    border-left: 4px solid $pen-red !important;
+  }
+  
+  &.el-message--warning {
+    border-left: 4px solid #FFA500 !important;
+  }
+  
+  &.el-message--info {
+    border-left: 4px solid $pen-blue !important;
+  }
+}
+
+// Material Design Dropdowns with cream paper
+.el-dropdown-menu {
+  background: $paper-cream !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: $elevation-3 !important;
+  border-radius: 4px !important;
+  
+  .el-dropdown-menu__item {
+    color: $pen-black !important;
+    
+    &:hover {
+      background: rgba(30, 144, 255, 0.1) !important;
+      color: $pen-blue !important;
+    }
+  }
+}
+
+// Icon adjustments
 .el-icon-video-play, .el-icon-video-pause { 
   font-size: 18px !important;
+  color: $pen-blue !important;
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $paper-beige;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $pen-blue;
+  border-radius: 4px;
+  
+  &:hover {
+    background: $pen-blue-dark;
+  }
 }

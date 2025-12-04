@@ -13,9 +13,6 @@
           <img loading="lazy" alt="" src="@/assets/xiaozhi-ai.png" style="height: 18px" />
         </div>
       </el-header>
-      <div class="login-person">
-        <img loading="lazy" alt="" src="@/assets/login/login-person.png" style="width: 100%" />
-      </div>
       <el-main style="position: relative">
         <div class="login-box" @keyup.enter="login">
           <div style="
@@ -59,26 +56,11 @@
             </el-dropdown>
           </div>
           <div style="padding: 0 30px">
-            <!-- 用户名登录 -->
-            <template v-if="!isMobileLogin">
-              <div class="input-box">
-                <img loading="lazy" alt="" class="input-icon" src="@/assets/login/username.png" />
-                <el-input v-model="form.username" :placeholder="$t('login.usernamePlaceholder')" />
-              </div>
-            </template>
-
-            <!-- 手机号登录 -->
-            <template v-else>
-              <div class="input-box">
-                <div style="display: flex; align-items: center; width: 100%">
-                  <el-select v-model="form.areaCode" style="width: 220px; margin-right: 10px">
-                    <el-option v-for="item in mobileAreaList" :key="item.key" :label="`${item.name} (${item.key})`"
-                      :value="item.key" />
-                  </el-select>
-                  <el-input v-model="form.mobile" :placeholder="$t('login.mobilePlaceholder')" />
-                </div>
-              </div>
-            </template>
+            <!-- Username login -->
+            <div class="input-box">
+              <img loading="lazy" alt="" class="input-icon" src="@/assets/login/username.png" />
+              <el-input v-model="form.username" :placeholder="$t('login.usernamePlaceholder')" />
+            </div>
 
             <div class="input-box">
               <img loading="lazy" alt="" class="input-icon" src="@/assets/login/password.png" />
@@ -108,29 +90,15 @@
                 justify-content: space-between;
                 margin-top: 20px;
               ">
-              <div v-if="allowUserRegister" style="cursor: pointer" @click="goToRegister">
-                {{ $t("login.register") }}
+              <div v-if="allowUserRegister" style="cursor: pointer; font-weight: 600; text-decoration: underline; font-size: 15px; color: #409EFF;" @click="goToRegister">
+                👉 {{ $t("login.register") }} {{ $t("login.orCreateAccount") || "(Create your first account)" }}
               </div>
-              <div style="cursor: pointer" @click="goToForgetPassword" v-if="enableMobileRegister">
+              <div style="cursor: pointer" @click="goToForgetPassword">
                 {{ $t("login.forgetPassword") }}
               </div>
             </div>
           </div>
           <div class="login-btn" @click="login">{{ $t("login.login") }}</div>
-
-          <!-- 登录方式切换按钮 -->
-          <div class="login-type-container" v-if="enableMobileRegister">
-            <div style="display: flex; gap: 10px">
-              <el-tooltip :content="$t('login.mobileLogin')" placement="bottom">
-                <el-button :type="isMobileLogin ? 'primary' : 'default'" icon="el-icon-mobile" circle
-                  @click="switchLoginType('mobile')"></el-button>
-              </el-tooltip>
-              <el-tooltip :content="$t('login.usernameLogin')" placement="bottom">
-                <el-button :type="!isMobileLogin ? 'primary' : 'default'" icon="el-icon-user" circle
-                  @click="switchLoginType('username')"></el-button>
-              </el-tooltip>
-            </div>
-          </div>
           <div style="font-size: 14px; color: #979db1">
             {{ $t("login.agreeTo") }}
             <div style="display: inline-block; color: #5778ff; cursor: pointer">
@@ -154,7 +122,7 @@
 import Api from "@/apis/api";
 import VersionFooter from "@/components/VersionFooter.vue";
 import i18n, { changeLanguage } from "@/i18n";
-import { getUUID, goToPage, showDanger, showSuccess, sm2Encrypt, validateMobile } from "@/utils";
+import { getUUID, goToPage, showDanger, showSuccess, sm2Encrypt } from "@/utils";
 import { mapState } from "vuex";
 
 export default {
@@ -165,15 +133,13 @@ export default {
   computed: {
     ...mapState({
       allowUserRegister: (state) => state.pubConfig.allowUserRegister,
-      enableMobileRegister: (state) => state.pubConfig.enableMobileRegister,
-      mobileAreaList: (state) => state.pubConfig.mobileAreaList,
       sm2PublicKey: (state) => state.pubConfig.sm2PublicKey,
     }),
-    // 获取当前语言
+    // Get current language
     currentLanguage() {
       return i18n.locale || "zh_CN";
     },
-    // 获取当前语言显示文本
+    // Get current language display text
     currentLanguageText() {
       const currentLang = this.currentLanguage;
       switch (currentLang) {
@@ -194,26 +160,41 @@ export default {
   },
   data() {
     return {
-      activeName: "username",
       form: {
         username: "",
         password: "",
         captcha: "",
         captchaId: "",
-        areaCode: "+86",
-        mobile: "",
       },
       captchaUuid: "",
       captchaUrl: "",
-      isMobileLogin: false,
       languageDropdownVisible: false,
     };
   },
   mounted() {
-    this.fetchCaptcha();
+    // First get configuration, then decide whether to redirect
     this.$store.dispatch("fetchPubConfig").then(() => {
-      // 根据配置决定默认登录方式
-      this.isMobileLogin = this.enableMobileRegister;
+      console.log('PubConfig loaded:', {
+        allowUserRegister: this.allowUserRegister,
+        currentPath: this.$route.path
+      });
+      
+      // If registration is allowed (usually means no users exist or registration is enabled), and current path is root or login page, automatically redirect to registration page
+      if (this.allowUserRegister && (this.$route.path === '/' || this.$route.path === '/login')) {
+        // Redirect to registration page immediately, no delay needed
+        console.log('No users found, redirecting to register page...');
+        this.$nextTick(() => {
+          this.$router.replace('/register');
+        });
+        return; // Do not continue execution, avoid loading captcha etc.
+      }
+      
+      // Only fetch captcha when no redirection is needed
+      this.fetchCaptcha();
+    }).catch((error) => {
+      console.error('Failed to load pubConfig:', error);
+      // If fetching configuration fails, still try to fetch captcha
+      this.fetchCaptcha();
     });
   },
   methods: {
@@ -230,18 +211,18 @@ export default {
             const blob = new Blob([res.data], { type: res.data.type });
             this.captchaUrl = URL.createObjectURL(blob);
           } else {
-            showDanger("验证码加载失败，点击刷新");
+            showDanger("Captcha loading failed, click to refresh");
           }
         });
       }
     },
 
-    // 切换语言下拉菜单的可见状态变化
+    // Handle language dropdown visibility change
     handleLanguageDropdownVisibleChange(visible) {
       this.languageDropdownVisible = visible;
     },
 
-    // 切换语言
+    // Change language
     changeLanguage(lang) {
       changeLanguage(lang);
       this.languageDropdownVisible = false;
@@ -251,18 +232,7 @@ export default {
       });
     },
 
-    // 切换登录方式
-    switchLoginType(type) {
-      this.isMobileLogin = type === "mobile";
-      // 清空表单
-      this.form.username = "";
-      this.form.mobile = "";
-      this.form.password = "";
-      this.form.captcha = "";
-      this.fetchCaptcha();
-    },
-
-    // 封装输入验证逻辑
+    // Input validation helper
     validateInput(input, messageKey) {
       if (!input.trim()) {
         showDanger(this.$t(messageKey));
@@ -272,19 +242,9 @@ export default {
     },
 
     async login() {
-      if (this.isMobileLogin) {
-        // 手机号登录验证
-        if (!validateMobile(this.form.mobile, this.form.areaCode)) {
-          showDanger(this.$t('login.requiredMobile'));
-          return;
-        }
-        // 拼接手机号作为用户名
-        this.form.username = this.form.areaCode + this.form.mobile;
-      } else {
-        // 用户名登录验证
-        if (!this.validateInput(this.form.username, 'login.requiredUsername')) {
-          return;
-        }
+      // Username validation
+      if (!this.validateInput(this.form.username, 'login.requiredUsername')) {
+        return;
       }
 
       // 验证密码
@@ -340,7 +300,7 @@ export default {
         }
       );
 
-      // 重新获取验证码
+      // Re-fetch captcha
       setTimeout(() => {
         this.fetchCaptcha();
       }, 1000);
@@ -357,12 +317,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "./auth.scss";
-
-.login-type-container {
-  margin: 10px 20px;
-  display: flex;
-  justify-content: center;
-}
 
 .title-language-dropdown {
   margin-left: auto;
@@ -388,19 +342,24 @@ export default {
   transition: transform 0.3s ease;
 }
 
+@import '../styles/theme.scss';
+
 :deep(.el-button--primary) {
-  background-color: #5778ff;
-  border-color: #5778ff;
+  @include material-button($pen-blue);
+  background-color: $pen-blue !important;
+  border-color: $pen-blue !important;
 
   &:hover,
   &:focus {
-    background-color: #4a6ae8;
-    border-color: #4a6ae8;
+    background-color: $pen-blue-dark !important;
+    border-color: $pen-blue-dark !important;
+    box-shadow: $elevation-3 !important;
   }
 
   &:active {
-    background-color: #3d5cd6;
-    border-color: #3d5cd6;
+    background-color: darken($pen-blue, 10%) !important;
+    border-color: darken($pen-blue, 10%) !important;
+    box-shadow: $elevation-1 !important;
   }
 }
 </style>

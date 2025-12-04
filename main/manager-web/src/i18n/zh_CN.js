@@ -202,7 +202,7 @@ export default {
   'firmwareDialog.firmwareFile': '固件文件',
   'firmwareDialog.clickUpload': '点击上传',
   'firmwareDialog.uploadTip': '只能上传固件文件(.bin/.apk)，且不超过100MB',
-  'firmwareDialog.uploadHint': '温馨提示：请上传合并前的xiaozhi.bin文件，而不是合并后的merged-binary.bin文件',
+  'firmwareDialog.uploadHint': '温馨提示：请上传合并前的pingping.bin文件，而不是合并后的merged-binary.bin文件',
   'firmwareDialog.remark': '备注',
   'firmwareDialog.remarkPlaceholder': '请输入备注信息',
   'firmwareDialog.requiredFirmwareName': '请输入固件名称(板子+版本号)',
@@ -644,7 +644,7 @@ export default {
 
   // 首页文本
   'home.addAgent': '添加智能体',
-  'home.greeting': '你好小智',
+  'home.greeting': '在这里创建新的Pingpings！',
   'home.wish': '让我们度过美好的一天！',
   'home.languageModel': '语言模型',
   'home.voiceModel': '音色模型',

@@ -302,6 +302,11 @@ public interface Constant {
     public static final String VERSION = "0.8.8";
 
     /**
+     * 默认智能体ID
+     */
+    String DEFAULT_AGENT_ID = "DEFAULT_AGENT";
+
+    /**
      * 无效固件URL
      */
     String INVALID_FIRMWARE_URL = "http://pingping.server.com:8002/xiaozhi/otaMag/download/NOT_ACTIVATED_FIRMWARE_THIS_IS_A_INVALID_URL";

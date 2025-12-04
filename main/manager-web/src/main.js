@@ -7,6 +7,7 @@ import router from './router';
 import store from './store';
 import i18n from './i18n';
 import './styles/global.scss';
+import './styles/theme.scss';
 import { register as registerServiceWorker } from './registerServiceWorker';
 
 // 创建事件总线，用于组件间通信

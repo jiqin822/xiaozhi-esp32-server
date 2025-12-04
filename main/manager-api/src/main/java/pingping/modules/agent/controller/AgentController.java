@@ -129,6 +129,11 @@ public class AgentController {
     @Operation(summary = "删除智能体")
     @RequiresPermissions("sys:role:normal")
     public Result<Void> delete(@PathVariable String id) {
+        // Prevent deletion of default agent
+        if (pingping.common.constant.Constant.DEFAULT_AGENT_ID.equals(id)) {
+            throw new pingping.common.exception.RenException(
+                    pingping.common.exception.ErrorCode.PARAMS_GET_ERROR, "Default agent cannot be deleted");
+        }
         // 先删除关联的设备
         deviceService.deleteByAgentId(id);
         // 删除关联的聊天记录

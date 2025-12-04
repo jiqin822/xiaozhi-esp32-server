@@ -188,14 +188,29 @@ export default {
       return pages;
     },
   },
+  watch: {
+    '$route'(to) {
+      const agentId = to.query.agentId || '';
+      this.currentAgentId = agentId;
+      if (agentId) {
+        this.fetchBindDevices(agentId);
+      }
+    }
+  },
   mounted() {
     const agentId = this.$route.query.agentId;
     if (agentId) {
+      this.currentAgentId = agentId;
       this.fetchBindDevices(agentId);
     }
   },
   created() {
-    this.getFirmwareTypes()
+    this.getFirmwareTypes();
+    // Ensure currentAgentId is set from route
+    const agentId = this.$route.query.agentId || '';
+    if (agentId) {
+      this.currentAgentId = agentId;
+    }
   },
   methods: {
     async getFirmwareTypes() {
@@ -270,9 +285,21 @@ export default {
         });
     },
     handleAddDevice() {
+      if (!this.currentAgentId) {
+        this.$message.warning(this.$t('device.agentIdRequired') || 'Agent ID is required. Please select an agent first.');
+        console.warn('Cannot open AddDeviceDialog: currentAgentId is empty', this.$route.query);
+        return;
+      }
+      console.log('Opening AddDeviceDialog with agentId:', this.currentAgentId);
       this.addDeviceDialogVisible = true;
     },
     handleManualAddDevice() {
+      if (!this.currentAgentId) {
+        this.$message.warning(this.$t('device.agentIdRequired') || 'Agent ID is required. Please select an agent first.');
+        console.warn('Cannot open ManualAddDeviceDialog: currentAgentId is empty', this.$route.query);
+        return;
+      }
+      console.log('Opening ManualAddDeviceDialog with agentId:', this.currentAgentId);
       this.manualAddDeviceDialogVisible = true;
     },
     submitRemark(row) {

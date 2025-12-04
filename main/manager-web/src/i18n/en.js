@@ -202,7 +202,7 @@ export default {
   'firmwareDialog.firmwareFile': 'Firmware File',
   'firmwareDialog.clickUpload': 'Click to Upload',
   'firmwareDialog.uploadTip': 'Only firmware files (.bin/.apk) are supported, and size should not exceed 100MB',
-  'firmwareDialog.uploadHint': 'Warm reminder: Please upload the pre-merged xiaozhi.bin file, not the merged merged-binary.bin file',
+  'firmwareDialog.uploadHint': 'Warm reminder: Please upload the pre-merged pingping.bin file, not the merged merged-binary.bin file',
   'firmwareDialog.remark': 'Remark',
   'firmwareDialog.remarkPlaceholder': 'Please enter remark information',
   'firmwareDialog.requiredFirmwareName': 'Please enter firmware name (board + version)',
@@ -276,7 +276,7 @@ export default {
 
   // Register page related
   'register.title': 'Create Account',
-  'register.welcome': 'Welcome to XiaoZhi AI',
+  'register.welcome': 'Welcome to PingPing AI',
   'register.usernamePlaceholder': 'Please enter username',
   'register.mobilePlaceholder': 'Please enter mobile phone number',
   'register.captchaPlaceholder': 'Please enter captcha',
@@ -512,7 +512,7 @@ export default {
   'button.close': 'Close',
 
   // System information
-  'system.name': 'XiaoZhi Service',
+  'system.name': 'PingPing Service',
 
   // Voiceprint related
   'voiceprint.management': 'Voiceprint Management',
@@ -644,7 +644,7 @@ export default {
 
   // Home page text
   'home.addAgent': 'Add Agent',
-  'home.greeting': 'Hi XiaoZhi',
+  'home.greeting': 'Create new Pingpings here!',
   'home.wish': "Let's have a wonderful day!",
   'home.languageModel': 'LLM',
   'home.voiceModel': 'TTS',

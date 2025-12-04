@@ -87,6 +87,11 @@ class VADProvider(VADProviderBase):
                 if conn.client_have_voice and not client_have_voice:
                     stop_duration = time.time() * 1000 - conn.last_activity_time
                     if stop_duration >= self.silence_threshold_ms:
+                        logger.bind(tag=TAG).debug(
+                            f"VAD detected voice stop: silence_duration={stop_duration:.0f}ms "
+                            f"(threshold={self.silence_threshold_ms}ms), "
+                            f"audio_chunks_collected={len(conn.asr_audio) if hasattr(conn, 'asr_audio') else 0}"
+                        )
                         conn.client_voice_stop = True
                 if client_have_voice:
                     conn.client_have_voice = True

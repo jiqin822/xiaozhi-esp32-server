@@ -246,9 +246,6 @@ public class SysParamsController {
         if (StringUtils.isBlank(url) || url.equals("null")) {
             throw new RenException(ErrorCode.VOICEPRINT_URL_EMPTY);
         }
-        if (url.contains("localhost") || url.contains("127.0.0.1")) {
-            throw new RenException(ErrorCode.VOICEPRINT_URL_LOCALHOST);
-        }
         if (!url.toLowerCase().contains("key")) {
             throw new RenException(ErrorCode.VOICEPRINT_URL_INVALID);
         }

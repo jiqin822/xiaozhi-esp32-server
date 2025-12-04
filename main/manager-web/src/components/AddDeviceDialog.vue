@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="visible" @close="handleClose" width="24%" center>
+  <el-dialog :visible.sync="dialogVisible" @close="handleClose" width="24%" center :append-to-body="true">
     <div
       style="margin: 0 10px 10px;display: flex;align-items: center;gap: 10px;font-weight: 700;font-size: 20px;text-align: left;color: #3d4566;">
       <div
@@ -36,7 +36,7 @@ export default {
   name: 'AddDeviceDialog',
   props: {
     visible: { type: Boolean, required: true },
-    agentId: { type: String, required: true }
+    agentId: { type: String, required: false, default: '' }
   },
   data() {
     return {
@@ -44,8 +44,30 @@ export default {
       loading: false,
     }
   },
+  computed: {
+    dialogVisible: {
+      get() {
+        return this.visible;
+      },
+      set(val) {
+        this.$emit('update:visible', val);
+      }
+    }
+  },
+  watch: {
+    visible(newVal) {
+      if (newVal) {
+        console.log('AddDeviceDialog opened with agentId:', this.agentId);
+        this.deviceCode = ""; // Reset form when dialog opens
+      }
+    }
+  },
   methods: {
     confirm() {
+      if (!this.agentId) {
+        this.$message.error(this.$t('device.agentIdRequired') || 'Agent ID is required');
+        return;
+      }
       if (!/^\d{6}$/.test(this.deviceCode)) {
         this.$message.error(this.$t('device.input6DigitCode'));
         return;
@@ -110,6 +132,12 @@ export default {
 ::v-deep .el-dialog {
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2001;
+}
+
+::v-deep .el-dialog__wrapper {
+  z-index: 2000 !important;
 }
 
 ::v-deep .el-dialog__headerbtn {
