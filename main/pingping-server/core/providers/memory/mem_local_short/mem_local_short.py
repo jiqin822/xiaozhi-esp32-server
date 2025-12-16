@@ -130,16 +130,27 @@ class MemoryProvider(MemoryProviderBase):
         all_memory = {}
         if os.path.exists(self.memory_path):
             with open(self.memory_path, "r", encoding="utf-8") as f:
-                all_memory = yaml.safe_load(f) or {}
-        if self.role_id in all_memory:
+                loaded = yaml.safe_load(f)
+                # Ensure all_memory is always a dict
+                if isinstance(loaded, dict):
+                    all_memory = loaded
+                else:
+                    all_memory = {}
+        if self.role_id and isinstance(all_memory, dict) and self.role_id in all_memory:
             self.short_memory = all_memory[self.role_id]
 
     def save_memory_to_file(self):
         all_memory = {}
         if os.path.exists(self.memory_path):
             with open(self.memory_path, "r", encoding="utf-8") as f:
-                all_memory = yaml.safe_load(f) or {}
-        all_memory[self.role_id] = self.short_memory
+                loaded = yaml.safe_load(f)
+                # Ensure all_memory is always a dict
+                if isinstance(loaded, dict):
+                    all_memory = loaded
+                else:
+                    all_memory = {}
+        if self.role_id:
+            all_memory[self.role_id] = self.short_memory
         with open(self.memory_path, "w", encoding="utf-8") as f:
             yaml.dump(all_memory, f, allow_unicode=True)
 
@@ -153,6 +164,11 @@ class MemoryProvider(MemoryProviderBase):
             logger.bind(tag=TAG).error(memory_key_msg)
         if self.llm is None:
             logger.bind(tag=TAG).error("LLM is not set for memory provider")
+            return None
+
+        # Check if msgs is None or not iterable
+        if msgs is None:
+            logger.bind(tag=TAG).warning("Messages list is None, cannot save memory")
             return None
 
         if len(msgs) < 2:

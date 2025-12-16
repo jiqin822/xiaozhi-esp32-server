@@ -111,7 +111,7 @@
     </div>
 
     <!-- 上传文档对话框 -->
-    <el-dialog :title="$t('knowledgeFileUpload.uploadDocument')" :visible.sync="uploadDialogVisible" width="800px">
+    <el-dialog :title="$t('knowledgeFileUpload.uploadDocument')" :visible.sync="uploadDialogVisible" width="800px" :append-to-body="true" :modal-append-to-body="false" style="z-index: 2001;">
       <el-upload class="document-uploader" drag :action="uploadUrl" :auto-upload="false" :on-change="handleFileChange"
         :multiple="true" :show-file-list="false" accept=".doc,.docx,.pdf,.txt,.md,.mdx,.csv,.xls,.xlsx,.ppt,.pptx">
         <i class="el-icon-upload"></i>

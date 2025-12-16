@@ -467,6 +467,16 @@ export default {
   'chatHistory.downloadCurrentSession': '下載本會話聊天記錄',
   'chatHistory.downloadCurrentWithPreviousSessions': '下載本會話及前20條會話聊天記錄',
   'chatHistory.downloadLinkFailed': '獲取下載鏈接失敗',
+  'chatHistory.deleteSession': '刪除會話',
+  'chatHistory.deleteMessage': '刪除消息',
+  'chatHistory.confirmDeleteSession': '確定要刪除此會話嗎？此會話中的所有消息將被永久刪除。',
+  'chatHistory.confirmDeleteMessage': '確定要刪除此消息嗎？',
+  'chatHistory.deleteSessionSuccess': '會話刪除成功',
+  'chatHistory.deleteSessionFailed': '刪除會話失敗',
+  'chatHistory.deleteMessageSuccess': '消息刪除成功',
+  'chatHistory.deleteMessageFailed': '刪除消息失敗',
+  'chatHistory.messageIdMissing': '消息ID缺失',
+  'chatHistory.warning': '警告',
 
   'cache.status': '緩存狀態',
   'cache.cdnEnabled': 'CDN模式已啟用',
@@ -512,7 +522,7 @@ export default {
   'button.close': '關閉',
 
   // 系统信息
-  'system.name': '小智服務',
+  'system.name': 'The Otter School',
 
   // 声纹相关
   'voiceprint.management': '聲紋管理',
@@ -644,7 +654,7 @@ export default {
 
   // 首頁文本
   'home.addAgent': '添加智能體',
-  'home.greeting': '在這裡創建新的Pingpings！',
+  'home.greeting': '在這裡創建新的Otters！',
   'home.wish': '讓我們度過美好的一天！',
   'home.languageModel': '語言模型',
   'home.voiceModel': '音色模型',

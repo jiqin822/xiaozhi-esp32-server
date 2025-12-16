@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" :visible="dialogVisible" width="600px" class="knowledge-base-dialog" @close="handleClose">
+  <el-dialog :title="title" :visible.sync="dialogVisible" width="600px" class="knowledge-base-dialog" @close="handleClose" :append-to-body="true" :modal-append-to-body="false" style="z-index: 2001;">
     <el-form ref="knowledgeBaseForm" :model="form" :rules="rules" label-width="100px" size="medium">
       <el-form-item :label="$t('knowledgeBaseDialog.name')" prop="name">
         <el-input v-model="form.name" :placeholder="$t('knowledgeBaseDialog.namePlaceholder')" clearable></el-input>

@@ -236,7 +236,7 @@ class ConnectionHandler:
     async def _save_and_close(self, ws):
         """Save memory and close connection"""
         try:
-            if self.memory:
+            if self.memory and self.dialogue and self.dialogue.dialogue:
                 # Use thread pool to save memory asynchronously
                 def save_memory_task():
                     try:
@@ -621,7 +621,16 @@ class ConnectionHandler:
             self.config["prompt"] = private_config["prompt"]
         # 获取声纹信息
         if private_config.get("voiceprint", None) is not None:
-            self.config["voiceprint"] = private_config["voiceprint"]
+            voiceprint_config = private_config["voiceprint"]
+            self.config["voiceprint"] = voiceprint_config
+            self.logger.bind(tag=TAG).info(
+                f"从API加载声纹配置: url={voiceprint_config.get('url', 'N/A')}, "
+                f"speakers={len(voiceprint_config.get('speakers', []))}个"
+            )
+            # 重新初始化声纹识别（使用从API获取的配置）
+            self._initialize_voiceprint()
+        else:
+            self.logger.bind(tag=TAG).debug("API响应中未包含声纹配置")
         if private_config.get("summaryMemory", None) is not None:
             self.config["summaryMemory"] = private_config["summaryMemory"]
         if private_config.get("device_max_output_size", None) is not None:

@@ -2,6 +2,8 @@ package pingping.modules.agent.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import pingping.modules.agent.dto.AgentVoicePrintSaveDTO;
 import pingping.modules.agent.dto.AgentVoicePrintUpdateDTO;
 import pingping.modules.agent.vo.AgentVoicePrintVO;
@@ -46,5 +48,14 @@ public interface AgentVoicePrintService {
      * @return 是否成功 T:成功 F：失败
      */
     boolean update(Long userId, AgentVoicePrintUpdateDTO dto);
+
+    /**
+     * 上传音频文件用于声纹注册
+     *
+     * @param agentId   智能体ID
+     * @param audioFile  音频文件
+     * @return 音频ID
+     */
+    String uploadAudioForVoicePrint(String agentId, MultipartFile audioFile);
 
 }

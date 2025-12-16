@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -82,6 +86,43 @@ public class AgentVoicePrintController {
         Long userId = SecurityUser.getUserId();
         List<AgentVoicePrintVO> list = agentVoicePrintService.list(userId, id);
         return new Result<List<AgentVoicePrintVO>>().ok(list);
+    }
+
+    @PostMapping(value = "/upload-audio", consumes = "multipart/form-data")
+    @Operation(summary = "上传音频文件用于声纹注册")
+    @Parameters({
+            @Parameter(name = "agentId", description = "智能体ID", required = true),
+            @Parameter(name = "audioFile", description = "音频文件", required = true)
+    })
+    @RequiresPermissions("sys:role:normal")
+    public Result<String> uploadAudio(
+            @RequestParam("agentId") String agentId,
+            @RequestParam("audioFile") MultipartFile audioFile) {
+        try {
+            // 验证文件
+            if (audioFile == null || audioFile.isEmpty()) {
+                return new Result<String>().error(ErrorCode.VOICEPRINT_AUDIO_EMPTY);
+            }
+
+            // 验证文件类型
+            String contentType = audioFile.getContentType();
+            if (contentType == null || !contentType.startsWith("audio/")) {
+                return new Result<String>().error(ErrorCode.VOICE_CLONE_NOT_AUDIO_FILE);
+            }
+
+            // 验证文件大小 (最大10MB)
+            if (audioFile.getSize() > 10 * 1024 * 1024) {
+                return new Result<String>().error(ErrorCode.VOICE_CLONE_AUDIO_TOO_LARGE);
+            }
+
+            // 上传音频并获取audioId
+            String audioId = agentVoicePrintService.uploadAudioForVoicePrint(agentId, audioFile);
+            return new Result<String>().ok(audioId);
+        } catch (RenException e) {
+            return new Result<String>().error(e.getCode(), e.getMsg());
+        } catch (Exception e) {
+            return new Result<String>().error(ErrorCode.VOICEPRINT_AUDIO_UPLOAD_FAILED, e.getMessage());
+        }
     }
 
 }

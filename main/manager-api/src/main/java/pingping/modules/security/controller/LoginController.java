@@ -75,12 +75,7 @@ public class LoginController {
         //     throw new RenException(ErrorCode.SMS_CAPTCHA_ERROR);
         // }
 
-        Boolean isMobileRegister = sysParamsService
-                .getValueObject(Constant.SysMSMParam.SERVER_ENABLE_MOBILE_REGISTER.getValue(), Boolean.class);
-        if (!isMobileRegister) {
-            throw new RenException(ErrorCode.MOBILE_REGISTER_DISABLED);
-        }
-        // Send SMS verification code
+        // Send SMS verification code (used for password retrieval)
         captchaService.sendSMSValidateCode(dto.getPhone());
         return new Result<>();
     }
@@ -127,23 +122,6 @@ public class LoginController {
         String actualPassword = Sm2DecryptUtil.decryptWithoutCaptcha(password, sysParamsService);
         
         login.setPassword(actualPassword);
-        
-        // Check if mobile registration is enabled
-        Boolean isMobileRegister = sysParamsService
-                .getValueObject(Constant.SysMSMParam.SERVER_ENABLE_MOBILE_REGISTER.getValue(), Boolean.class);
-        boolean validate;
-        if (isMobileRegister) {
-            // Validate if username is a phone number
-            boolean validPhone = ValidatorUtils.isValidPhone(login.getUsername());
-            if (!validPhone) {
-                throw new RenException(ErrorCode.USERNAME_NOT_PHONE);
-            }
-            // Validate SMS verification code
-            validate = captchaService.validateSMSValidateCode(login.getUsername(), login.getMobileCaptcha(), false);
-            if (!validate) {
-                throw new RenException(ErrorCode.SMS_CODE_ERROR);
-            }
-        }
 
         // Get user by username
         SysUserDTO userDTO = sysUserService.getByUsername(login.getUsername());

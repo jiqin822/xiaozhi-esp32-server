@@ -276,7 +276,7 @@ export default {
 
   // Register page related
   'register.title': 'Konto erstellen',
-  'register.welcome': 'Willkommen bei PingPing AI',
+  'register.welcome': 'Willkommen bei The Otter School',
   'register.usernamePlaceholder': 'Bitte Benutzernamen eingeben',
   'register.mobilePlaceholder': 'Bitte Handynummer eingeben',
   'register.captchaPlaceholder': 'Bitte Captcha eingeben',
@@ -467,6 +467,16 @@ export default {
   'chatHistory.downloadCurrentSession': 'Aktuelle Sitzung Chat-Verlauf herunterladen',
   'chatHistory.downloadCurrentWithPreviousSessions': 'Aktuelle und vorherige 20 Sitzungen Chat-Verlauf herunterladen',
   'chatHistory.downloadLinkFailed': 'Download-Link konnte nicht abgerufen werden',
+  'chatHistory.deleteSession': 'Sitzung löschen',
+  'chatHistory.deleteMessage': 'Nachricht löschen',
+  'chatHistory.confirmDeleteSession': 'Sind Sie sicher, dass Sie diese Sitzung löschen möchten? Alle Nachrichten in dieser Sitzung werden dauerhaft gelöscht.',
+  'chatHistory.confirmDeleteMessage': 'Sind Sie sicher, dass Sie diese Nachricht löschen möchten?',
+  'chatHistory.deleteSessionSuccess': 'Sitzung erfolgreich gelöscht',
+  'chatHistory.deleteSessionFailed': 'Sitzung konnte nicht gelöscht werden',
+  'chatHistory.deleteMessageSuccess': 'Nachricht erfolgreich gelöscht',
+  'chatHistory.deleteMessageFailed': 'Nachricht konnte nicht gelöscht werden',
+  'chatHistory.messageIdMissing': 'Nachrichten-ID fehlt',
+  'chatHistory.warning': 'Warnung',
 
   'cache.status': 'Cache-Status',
   'cache.cdnEnabled': 'CDN-Modus aktiviert',
@@ -512,7 +522,7 @@ export default {
   'button.close': 'Schließen',
 
   // System information
-  'system.name': 'PingPing Service',
+  'system.name': 'The Otter School',
 
   // Voiceprint related
   'voiceprint.management': 'Stimmabdruckverwaltung',
@@ -644,7 +654,7 @@ export default {
 
   // Home page text
   'home.addAgent': 'Agent hinzufügen',
-  'home.greeting': 'Erstellen Sie hier neue Pingpings!',
+  'home.greeting': 'Erstellen Sie hier neue Otters!',
   'home.wish': 'Lassen Sie uns einen wunderbaren Tag haben!',
   'home.languageModel': 'LLM',
   'home.voiceModel': 'TTS',

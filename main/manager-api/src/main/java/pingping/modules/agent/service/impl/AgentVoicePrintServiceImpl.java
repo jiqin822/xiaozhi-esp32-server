@@ -20,6 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -35,11 +36,14 @@ import pingping.modules.agent.dto.AgentVoicePrintSaveDTO;
 import pingping.modules.agent.dto.AgentVoicePrintUpdateDTO;
 import pingping.modules.agent.dto.IdentifyVoicePrintResponse;
 import pingping.modules.agent.entity.AgentVoicePrintEntity;
+import pingping.modules.agent.entity.AgentChatHistoryEntity;
 import pingping.modules.agent.service.AgentChatAudioService;
 import pingping.modules.agent.service.AgentChatHistoryService;
 import pingping.modules.agent.service.AgentVoicePrintService;
 import pingping.modules.agent.vo.AgentVoicePrintVO;
 import pingping.modules.sys.service.SysParamsService;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author zjy
@@ -407,5 +411,40 @@ public class AgentVoicePrintServiceImpl extends ServiceImpl<AgentVoicePrintDao, 
             return JsonUtils.parseObject(responseBody, IdentifyVoicePrintResponse.class);
         }
         return null;
+    }
+
+    @Override
+    public String uploadAudioForVoicePrint(String agentId, MultipartFile audioFile) {
+        try {
+            // 读取音频文件数据
+            byte[] audioData = audioFile.getBytes();
+            if (audioData == null || audioData.length == 0) {
+                throw new RenException(ErrorCode.VOICEPRINT_AUDIO_EMPTY);
+            }
+
+            // 保存音频数据并获取audioId
+            String audioId = agentChatAudioService.saveAudio(audioData);
+
+            // 创建临时聊天记录条目，将音频与智能体关联
+            // 这样 isAudioOwnedByAgent 验证就能通过
+            AgentChatHistoryEntity historyEntity = AgentChatHistoryEntity.builder()
+                    .agentId(agentId)
+                    .audioId(audioId)
+                    .chatType((byte) 1) // 用户消息
+                    .content("[声纹注册音频]") // 标记为声纹注册音频
+                    .sessionId("voiceprint-upload-" + UUID.randomUUID().toString()) // 使用特殊sessionId标识
+                    .macAddress("") // 空MAC地址，表示这是上传的音频
+                    .createdAt(new Date())
+                    .updatedAt(new Date())
+                    .build();
+
+            // 保存聊天记录
+            agentChatHistoryService.save(historyEntity);
+
+            return audioId;
+        } catch (Exception e) {
+            log.error("上传声纹音频失败: {}", e.getMessage(), e);
+            throw new RenException(ErrorCode.VOICEPRINT_AUDIO_UPLOAD_FAILED, e.getMessage());
+        }
     }
 }

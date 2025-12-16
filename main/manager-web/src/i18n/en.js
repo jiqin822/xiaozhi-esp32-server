@@ -276,7 +276,7 @@ export default {
 
   // Register page related
   'register.title': 'Create Account',
-  'register.welcome': 'Welcome to PingPing AI',
+  'register.welcome': 'Welcome to The Otter School',
   'register.usernamePlaceholder': 'Please enter username',
   'register.mobilePlaceholder': 'Please enter mobile phone number',
   'register.captchaPlaceholder': 'Please enter captcha',
@@ -467,6 +467,16 @@ export default {
   'chatHistory.downloadCurrentSession': 'Download current session chat history',
   'chatHistory.downloadCurrentWithPreviousSessions': 'Download current and previous 20 sessions chat history',
   'chatHistory.downloadLinkFailed': 'Failed to get download link',
+  'chatHistory.deleteSession': 'Delete Session',
+  'chatHistory.deleteMessage': 'Delete Message',
+  'chatHistory.confirmDeleteSession': 'Are you sure you want to delete this session? All messages in this session will be permanently deleted.',
+  'chatHistory.confirmDeleteMessage': 'Are you sure you want to delete this message?',
+  'chatHistory.deleteSessionSuccess': 'Session deleted successfully',
+  'chatHistory.deleteSessionFailed': 'Failed to delete session',
+  'chatHistory.deleteMessageSuccess': 'Message deleted successfully',
+  'chatHistory.deleteMessageFailed': 'Failed to delete message',
+  'chatHistory.messageIdMissing': 'Message ID is missing',
+  'chatHistory.warning': 'Warning',
 
   'cache.status': 'Cache Status',
   'cache.cdnEnabled': 'CDN Mode Enabled',
@@ -512,7 +522,7 @@ export default {
   'button.close': 'Close',
 
   // System information
-  'system.name': 'PingPing Service',
+  'system.name': 'The Otter School',
 
   // Voiceprint related
   'voiceprint.management': 'Voiceprint Management',
@@ -644,7 +654,7 @@ export default {
 
   // Home page text
   'home.addAgent': 'Add Agent',
-  'home.greeting': 'Create new Pingpings here!',
+  'home.greeting': 'Create new Otters here!',
   'home.wish': "Let's have a wonderful day!",
   'home.languageModel': 'LLM',
   'home.voiceModel': 'TTS',

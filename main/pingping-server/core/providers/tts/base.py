@@ -102,17 +102,36 @@ class TTSProviderBase(ABC):
                     else:
                         max_repeat_time -= 1
                 except Exception as e:
+                    # Safely encode error message to avoid encoding errors
+                    try:
+                        error_msg = str(e)
+                        if isinstance(error_msg, str):
+                            error_msg = error_msg.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
+                    except Exception:
+                        error_msg = repr(e) if hasattr(e, '__repr__') else "Unknown error"
+                    # Ensure text is also UTF-8 encoded
+                    safe_text = text
+                    if isinstance(safe_text, str):
+                        safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                     logger.bind(tag=TAG).warning(
-                        f"语音生成失败{5 - max_repeat_time + 1}次: {text}，错误: {e}"
+                        f"语音生成失败{5 - max_repeat_time + 1}次: {safe_text}，错误: {error_msg}"
                     )
                     max_repeat_time -= 1
             if max_repeat_time > 0:
+                # Ensure text is UTF-8 encoded
+                safe_text = text
+                if isinstance(safe_text, str):
+                    safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                 logger.bind(tag=TAG).info(
-                    f"语音生成成功: {text}，重试{5 - max_repeat_time}次"
+                    f"语音生成成功: {safe_text}，重试{5 - max_repeat_time}次"
                 )
             else:
+                # Ensure text is UTF-8 encoded
+                safe_text = text
+                if isinstance(safe_text, str):
+                    safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                 logger.bind(tag=TAG).error(
-                    f"语音生成失败: {text}，请检查网络或服务是否正常"
+                    f"语音生成失败: {safe_text}，请检查网络或服务是否正常"
                 )
             return None
         else:
@@ -122,8 +141,19 @@ class TTSProviderBase(ABC):
                     try:
                         asyncio.run(self.text_to_speak(text, tmp_file))
                     except Exception as e:
+                        # Safely encode error message to avoid encoding errors
+                        try:
+                            error_msg = str(e)
+                            if isinstance(error_msg, str):
+                                error_msg = error_msg.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
+                        except Exception:
+                            error_msg = repr(e) if hasattr(e, '__repr__') else "Unknown error"
+                        # Ensure text is also UTF-8 encoded
+                        safe_text = text
+                        if isinstance(safe_text, str):
+                            safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                         logger.bind(tag=TAG).warning(
-                            f"语音生成失败{5 - max_repeat_time + 1}次: {text}，错误: {e}"
+                            f"语音生成失败{5 - max_repeat_time + 1}次: {safe_text}，错误: {error_msg}"
                         )
                         # 未执行成功，删除文件
                         if os.path.exists(tmp_file):
@@ -131,12 +161,20 @@ class TTSProviderBase(ABC):
                         max_repeat_time -= 1
 
                 if max_repeat_time > 0:
+                    # Ensure text is UTF-8 encoded
+                    safe_text = text
+                    if isinstance(safe_text, str):
+                        safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                     logger.bind(tag=TAG).info(
-                        f"语音生成成功: {text}:{tmp_file}，重试{5 - max_repeat_time}次"
+                        f"语音生成成功: {safe_text}:{tmp_file}，重试{5 - max_repeat_time}次"
                     )
                 else:
+                    # Ensure text is UTF-8 encoded
+                    safe_text = text
+                    if isinstance(safe_text, str):
+                        safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                     logger.bind(tag=TAG).error(
-                        f"语音生成失败: {text}，请检查网络或服务是否正常"
+                        f"语音生成失败: {safe_text}，请检查网络或服务是否正常"
                     )
                     self.tts_audio_queue.put((SentenceType.FIRST, None, text))
                 self._process_audio_file_stream(tmp_file, callback=opus_handler)
@@ -164,17 +202,36 @@ class TTSProviderBase(ABC):
                     else:
                         max_repeat_time -= 1
                 except Exception as e:
+                    # Safely encode error message to avoid encoding errors
+                    try:
+                        error_msg = str(e)
+                        if isinstance(error_msg, str):
+                            error_msg = error_msg.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
+                    except Exception:
+                        error_msg = repr(e) if hasattr(e, '__repr__') else "Unknown error"
+                    # Ensure text is also UTF-8 encoded
+                    safe_text = text
+                    if isinstance(safe_text, str):
+                        safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                     logger.bind(tag=TAG).warning(
-                        f"语音生成失败{5 - max_repeat_time + 1}次: {text}，错误: {e}"
+                        f"语音生成失败{5 - max_repeat_time + 1}次: {safe_text}，错误: {error_msg}"
                     )
                     max_repeat_time -= 1
             if max_repeat_time > 0:
+                # Ensure text is UTF-8 encoded
+                safe_text = text
+                if isinstance(safe_text, str):
+                    safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                 logger.bind(tag=TAG).info(
-                    f"语音生成成功: {text}，重试{5 - max_repeat_time}次"
+                    f"语音生成成功: {safe_text}，重试{5 - max_repeat_time}次"
                 )
             else:
+                # Ensure text is UTF-8 encoded
+                safe_text = text
+                if isinstance(safe_text, str):
+                    safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                 logger.bind(tag=TAG).error(
-                    f"语音生成失败: {text}，请检查网络或服务是否正常"
+                    f"语音生成失败: {safe_text}，请检查网络或服务是否正常"
                 )
             return None
         else:
@@ -184,8 +241,19 @@ class TTSProviderBase(ABC):
                     try:
                         asyncio.run(self.text_to_speak(text, tmp_file))
                     except Exception as e:
+                        # Safely encode error message to avoid encoding errors
+                        try:
+                            error_msg = str(e)
+                            if isinstance(error_msg, str):
+                                error_msg = error_msg.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
+                        except Exception:
+                            error_msg = repr(e) if hasattr(e, '__repr__') else "Unknown error"
+                        # Ensure text is also UTF-8 encoded
+                        safe_text = text
+                        if isinstance(safe_text, str):
+                            safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                         logger.bind(tag=TAG).warning(
-                            f"语音生成失败{5 - max_repeat_time + 1}次: {text}，错误: {e}"
+                            f"语音生成失败{5 - max_repeat_time + 1}次: {safe_text}，错误: {error_msg}"
                         )
                         # 未执行成功，删除文件
                         if os.path.exists(tmp_file):
@@ -193,12 +261,20 @@ class TTSProviderBase(ABC):
                         max_repeat_time -= 1
 
                 if max_repeat_time > 0:
+                    # Ensure text is UTF-8 encoded
+                    safe_text = text
+                    if isinstance(safe_text, str):
+                        safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                     logger.bind(tag=TAG).info(
-                        f"语音生成成功: {text}:{tmp_file}，重试{5 - max_repeat_time}次"
+                        f"语音生成成功: {safe_text}:{tmp_file}，重试{5 - max_repeat_time}次"
                     )
                 else:
+                    # Ensure text is UTF-8 encoded
+                    safe_text = text
+                    if isinstance(safe_text, str):
+                        safe_text = safe_text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
                     logger.bind(tag=TAG).error(
-                        f"语音生成失败: {text}，请检查网络或服务是否正常"
+                        f"语音生成失败: {safe_text}，请检查网络或服务是否正常"
                     )
 
                 return tmp_file

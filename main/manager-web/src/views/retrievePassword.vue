@@ -2,10 +2,10 @@
   <div class="welcome" @keyup.enter="retrievePassword">
     <el-container style="height: 100%;">
       <!-- 保持相同的头部 -->
-      <el-header>
-        <div style="display: flex;align-items: center;margin-top: 15px;margin-left: 10px;gap: 10px;">
-          <img loading="lazy" alt="" src="@/assets/xiaozhi-logo.png" style="width: 45px;height: 45px;" />
-          <img loading="lazy" alt="" src="@/assets/xiaozhi-ai.png" style="height: 18px;" />
+      <el-header class="login-header">
+        <div class="header-logo-container">
+          <img loading="lazy" alt="" src="@/assets/xiaozhi-logo.png" class="header-logo-img" />
+          <img loading="lazy" alt="" src="@/assets/xiaozhi-ai.png" class="header-brand-img" />
         </div>
       </el-header>
       <el-main style="position: relative;">

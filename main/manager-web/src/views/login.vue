@@ -1,16 +1,10 @@
 <template>
   <div class="welcome">
     <el-container style="height: 100%">
-      <el-header>
-        <div style="
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-            margin-left: 10px;
-            gap: 10px;
-          ">
-          <img loading="lazy" alt="" src="@/assets/xiaozhi-logo.png" style="width: 45px; height: 45px" />
-          <img loading="lazy" alt="" src="@/assets/xiaozhi-ai.png" style="height: 18px" />
+      <el-header class="login-header">
+        <div class="header-logo-container">
+          <img loading="lazy" alt="" src="@/assets/xiaozhi-logo.png" class="header-logo-img" />
+          <img loading="lazy" alt="" src="@/assets/xiaozhi-ai.png" class="header-brand-img" />
         </div>
       </el-header>
       <el-main style="position: relative">
@@ -179,10 +173,14 @@ export default {
         currentPath: this.$route.path
       });
       
-      // If registration is allowed (usually means no users exist or registration is enabled), and current path is root or login page, automatically redirect to registration page
-      if (this.allowUserRegister && (this.$route.path === '/' || this.$route.path === '/login')) {
-        // Redirect to registration page immediately, no delay needed
-        console.log('No users found, redirecting to register page...');
+      // Only auto-redirect to registration if:
+      // 1. Registration is allowed
+      // 2. User is on the root path (first visit), not explicitly on /login
+      // 3. User is not already logged in (no token)
+      const hasToken = localStorage.getItem('token');
+      if (this.allowUserRegister && this.$route.path === '/' && !hasToken) {
+        // Redirect to registration page only on first visit to root path
+        console.log('First visit, redirecting to register page...');
         this.$nextTick(() => {
           this.$router.replace('/register');
         });

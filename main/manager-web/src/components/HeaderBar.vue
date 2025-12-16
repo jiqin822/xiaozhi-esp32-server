@@ -649,12 +649,13 @@ export default {
 }
 
 .logo-img {
-  width: 42px;
-  height: 42px;
+  width: 64px;
+  height: 64px;
 }
 
 .brand-img {
-  height: 20px;
+  height: 32px;
+  width: auto;
 }
 
 .header-center {

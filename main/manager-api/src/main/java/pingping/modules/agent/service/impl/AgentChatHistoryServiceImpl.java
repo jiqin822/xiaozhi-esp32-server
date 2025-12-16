@@ -15,6 +15,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import pingping.common.constant.Constant;
+import pingping.common.exception.ErrorCode;
+import pingping.common.exception.RenException;
 import pingping.common.page.PageData;
 import pingping.common.utils.ConvertUtils;
 import pingping.common.utils.JsonUtils;
@@ -167,5 +169,29 @@ public class AgentChatHistoryServiceImpl extends ServiceImpl<AiAgentChatHistoryD
                 .eq(AgentChatHistoryEntity::getAudioId, audioId)
                 .eq(AgentChatHistoryEntity::getAgentId, agentId));
         return row == 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteById(Long id, String agentId) {
+        // 验证消息是否属于该智能体
+        AgentChatHistoryEntity entity = baseMapper.selectById(id);
+        if (entity == null || !entity.getAgentId().equals(agentId)) {
+            throw new RenException(ErrorCode.CHAT_HISTORY_NO_PERMISSION);
+        }
+        // 删除消息
+        baseMapper.deleteById(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteBySessionId(String agentId, String sessionId) {
+        // 构建查询条件
+        QueryWrapper<AgentChatHistoryEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("agent_id", agentId)
+                .eq("session_id", sessionId);
+        
+        // 删除该会话的所有消息
+        baseMapper.delete(wrapper);
     }
 }

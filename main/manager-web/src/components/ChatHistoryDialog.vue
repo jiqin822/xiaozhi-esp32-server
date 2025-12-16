@@ -1,16 +1,26 @@
 <template>
     <el-dialog
         :title="$t('chatHistory.with') + agentName + $t('chatHistory.dialogTitle') + (currentMacAddress ? '[' + currentMacAddress + ']' : '')"
-        :visible.sync="dialogVisible" width="80%" :before-close="handleClose" custom-class="chat-history-dialog">
+        :visible.sync="dialogVisible" width="80%" :before-close="handleClose" custom-class="chat-history-dialog" :append-to-body="true" :modal-append-to-body="false" style="z-index: 2001;">
         <div class="chat-container">
             <div class="session-list" @scroll="handleScroll">
                 <div v-for="session in sessions" :key="session.sessionId" class="session-item"
-                    :class="{ active: currentSessionId === session.sessionId }" @click="selectSession(session)">
+                    :class="{ active: currentSessionId === session.sessionId }">
+                    <div class="session-content" @click="selectSession(session)">
                     <img :src="getUserAvatar(session.sessionId)" class="avatar" />
                     <div class="session-info">
                         <div class="session-time">{{ formatTime(session.createdAt) }}</div>
                         <div class="message-count">{{ session.chatCount > 99 ? '99' : session.chatCount }}</div>
                     </div>
+                    </div>
+                    <el-button
+                        type="text"
+                        icon="el-icon-delete"
+                        class="delete-session-btn"
+                        @click.stop="deleteSession(session)"
+                        size="mini"
+                        :title="$t('chatHistory.deleteSession')"
+                    ></el-button>
                 </div>
                 <div v-if="loading" class="loading">{{ $t('chatHistory.loading') }}</div>
                 <div v-if="!hasMore" class="no-more">{{ $t('chatHistory.noMoreRecords') }}</div>
@@ -24,10 +34,20 @@
                         <div v-else class="message-item" :class="{ 'user-message': message.chatType === 1 }">
                             <img :src="message.chatType === 1 ? getUserAvatar(currentSessionId) : require('@/assets/xiaozhi-logo.png')"
                                 class="avatar" />
+                            <div class="message-content-wrapper">
                             <div class="message-content">
                                 {{ extractContentFromString(message.content) }}
                                 <i v-if="message.audioId" :class="getAudioIconClass(message)"
                                     @click="playAudio(message)" class="audio-icon"></i>
+                                </div>
+                                <el-button
+                                    type="text"
+                                    icon="el-icon-delete"
+                                    class="delete-message-btn"
+                                    @click="deleteMessage(message)"
+                                    size="mini"
+                                    :title="$t('chatHistory.deleteMessage')"
+                                ></el-button>
                             </div>
                         </div>
                     </div>
@@ -325,6 +345,68 @@ export default {
                     this.$message.error(this.$t('chatHistory.downloadLinkFailed'));
                 }
             });
+        },
+        // 删除会话
+        deleteSession(session) {
+            this.$confirm(
+                this.$t('chatHistory.confirmDeleteSession'),
+                this.$t('chatHistory.warning'),
+                {
+                    confirmButtonText: this.$t('common.confirm'),
+                    cancelButtonText: this.$t('common.cancel'),
+                    type: 'warning'
+                }
+            ).then(() => {
+                Api.agent.deleteChatHistorySession(this.agentId, session.sessionId, (res) => {
+                    if (res && res.data && res.data.code === 0) {
+                        this.$message.success(this.$t('chatHistory.deleteSessionSuccess'));
+                        // 从列表中移除该会话
+                        this.sessions = this.sessions.filter(s => s.sessionId !== session.sessionId);
+                        // 如果删除的是当前会话，清空消息列表
+                        if (this.currentSessionId === session.sessionId) {
+                            this.currentSessionId = '';
+                            this.messages = [];
+                            this.currentMacAddress = '';
+                            // 如果还有其他会话，选择第一个
+                            if (this.sessions.length > 0) {
+                                this.selectSession(this.sessions[0]);
+                            }
+                        }
+                    } else {
+                        this.$message.error(res.data?.msg || this.$t('chatHistory.deleteSessionFailed'));
+                    }
+                });
+            }).catch(() => {
+                // 用户取消删除
+            });
+        },
+        // 删除消息
+        deleteMessage(message) {
+            if (!message.id) {
+                this.$message.warning(this.$t('chatHistory.messageIdMissing'));
+                return;
+            }
+            this.$confirm(
+                this.$t('chatHistory.confirmDeleteMessage'),
+                this.$t('chatHistory.warning'),
+                {
+                    confirmButtonText: this.$t('common.confirm'),
+                    cancelButtonText: this.$t('common.cancel'),
+                    type: 'warning'
+                }
+            ).then(() => {
+                Api.agent.deleteChatHistoryMessage(this.agentId, message.id, (res) => {
+                    if (res && res.data && res.data.code === 0) {
+                        this.$message.success(this.$t('chatHistory.deleteMessageSuccess'));
+                        // 从消息列表中移除该消息
+                        this.messages = this.messages.filter(m => m.id !== message.id);
+                    } else {
+                        this.$message.error(res.data?.msg || this.$t('chatHistory.deleteMessageFailed'));
+                    }
+                });
+            }).catch(() => {
+                // 用户取消删除
+            });
         }
     }
 };
@@ -347,9 +429,16 @@ export default {
     display: flex;
     align-items: center;
     padding: 10px;
-    cursor: pointer;
     border-radius: 8px;
     margin-bottom: 10px;
+    position: relative;
+}
+
+.session-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    cursor: pointer;
 }
 
 .session-item:hover {
@@ -358,6 +447,17 @@ export default {
 
 .session-item.active {
     background-color: #e6f7ff;
+}
+
+.delete-session-btn {
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: #f56c6c;
+    padding: 5px;
+}
+
+.session-item:hover .delete-session-btn {
+    opacity: 1;
 }
 
 .avatar {
@@ -412,12 +512,19 @@ export default {
     flex-direction: row-reverse;
 }
 
-.message-content {
+.message-content-wrapper {
     max-width: 60%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 10px;
+}
+
+.message-content {
+    flex: 1;
     padding: 10px 15px;
     border-radius: 8px;
     background-color: #f0f0f0;
-    margin: 0 10px;
     text-align: left;
     line-height: 20px;
     position: relative;
@@ -432,6 +539,10 @@ export default {
     color: #1890ff;
 }
 
+.user-message .message-content-wrapper {
+    flex-direction: row-reverse;
+}
+
 .user-message .message-content {
     background-color: #1890ff;
     color: white;
@@ -440,6 +551,21 @@ export default {
 
 .user-message .audio-icon {
     color: white;
+}
+
+.delete-message-btn {
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: #f56c6c;
+    padding: 5px;
+}
+
+.message-item:hover .delete-message-btn {
+    opacity: 1;
+}
+
+.user-message .delete-message-btn {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .loading,

@@ -205,6 +205,44 @@ public class AgentController {
         return new Result<List<AgentChatHistoryUserVO>>().ok(data);
     }
 
+    @DeleteMapping("/{id}/chat-history/session/{sessionId}")
+    @Operation(summary = "删除智能体会话聊天记录")
+    @RequiresPermissions("sys:role:normal")
+    public Result<Void> deleteChatHistorySession(
+            @PathVariable("id") String id,
+            @PathVariable("sessionId") String sessionId) {
+        // 获取当前用户
+        UserDetail user = SecurityUser.getUser();
+
+        // 检查权限
+        if (!agentService.checkAgentPermission(id, user.getId())) {
+            return new Result<Void>().error("没有权限删除该智能体的聊天记录");
+        }
+
+        // 删除会话聊天记录
+        agentChatHistoryService.deleteBySessionId(id, sessionId);
+        return new Result<>();
+    }
+
+    @DeleteMapping("/{id}/chat-history/message/{messageId}")
+    @Operation(summary = "删除智能体聊天记录消息")
+    @RequiresPermissions("sys:role:normal")
+    public Result<Void> deleteChatHistoryMessage(
+            @PathVariable("id") String id,
+            @PathVariable("messageId") Long messageId) {
+        // 获取当前用户
+        UserDetail user = SecurityUser.getUser();
+
+        // 检查权限
+        if (!agentService.checkAgentPermission(id, user.getId())) {
+            return new Result<Void>().error("没有权限删除该智能体的聊天记录");
+        }
+
+        // 删除消息
+        agentChatHistoryService.deleteById(messageId, id);
+        return new Result<>();
+    }
+
     @GetMapping("/{id}/chat-history/audio")
     @Operation(summary = "获取音频内容")
     @RequiresPermissions("sys:role:normal")

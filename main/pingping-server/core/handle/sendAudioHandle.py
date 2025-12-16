@@ -9,6 +9,24 @@ TAG = __name__
 
 
 async def sendAudioMessage(conn, sentenceType, audios, text):
+    # 确保text是UTF-8编码的字符串，避免ASCII编码错误
+    if text is not None:
+        if isinstance(text, bytes):
+            try:
+                text = text.decode('utf-8', errors='replace')
+            except Exception:
+                text = ""
+        elif not isinstance(text, str):
+            try:
+                text = str(text)
+            except (UnicodeEncodeError, UnicodeDecodeError):
+                text = repr(text)
+        # 清理可能的编码问题
+        try:
+            text = text.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
+        except Exception:
+            text = ""
+    
     if conn.tts.tts_audio_first_sentence:
         conn.logger.bind(tag=TAG).info(f"发送第一段语音: {text}")
         conn.tts.tts_audio_first_sentence = False

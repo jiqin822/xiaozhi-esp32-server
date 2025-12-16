@@ -11,6 +11,9 @@ import lombok.Data;
 @Data
 @Schema(description = "智能体聊天记录")
 public class AgentChatHistoryDTO {
+    @Schema(description = "主键ID")
+    private Long id;
+
     @Schema(description = "创建时间")
     private Date createdAt;
 

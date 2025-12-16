@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
-import { register, sendSmsCode } from '@/api/auth';
+import { register } from '@/api/auth';
 import { useConfigStore } from '@/store';
 import { getEnvBaseUrl } from '@/utils';
 import { toast } from '@/utils/toast';
@@ -49,9 +49,6 @@ interface RegisterData {
   confirmPassword: string
   captcha: string
   captchaId: string
-  areaCode: string
-  mobile: string
-  mobileCaptcha: string
 }
 
 const formData = ref<RegisterData>({
@@ -59,70 +56,21 @@ const formData = ref<RegisterData>({
   password: '',
   confirmPassword: '',
   captcha: '',
-  captchaId: '',
-  areaCode: '+86',
-  mobile: '',
-  mobileCaptcha: '',
+  captchaId: ''
 })
 
 // 验证码图片
 const captchaImage = ref('')
 const loading = ref(false)
-const smsLoading = ref(false)
-const smsCountdown = ref(0)
-
-// 注册方式：'username' | 'mobile'
-const registerType = ref<'username' | 'mobile'>('username')
 
 // 获取配置store
 const configStore = useConfigStore()
-
-// 区号选择相关
-const showAreaCodeSheet = ref(false)
-const selectedAreaCode = ref('+86')
-const selectedAreaName = ref('中国大陆')
-
-// 计算属性：是否启用手机号注册
-const enableMobileRegister = computed(() => {
-  return configStore.config.enableMobileRegister
-})
-
-// 计算属性：区号列表
-const areaCodeList = computed(() => {
-  return configStore.config.mobileAreaList || [{ name: '中国大陆', key: '+86' }]
-})
 
 // SM2公钥
 const sm2PublicKey = computed(() => {
   return configStore.config.sm2PublicKey
 })
 
-// 切换注册方式
-function toggleRegisterType() {
-  registerType.value = registerType.value === 'username' ? 'mobile' : 'username'
-  // 清空输入框
-  formData.value.username = ''
-  formData.value.mobile = ''
-  formData.value.mobileCaptcha = ''
-}
-
-// 打开区号选择弹窗
-function openAreaCodeSheet() {
-  showAreaCodeSheet.value = true
-}
-
-// 选择区号
-function selectAreaCode(item: { name: string, key: string }) {
-  selectedAreaCode.value = item.key
-  selectedAreaName.value = item.name
-  formData.value.areaCode = item.key
-  showAreaCodeSheet.value = false
-}
-
-// 关闭区号选择弹窗
-function closeAreaCodeSheet() {
-  showAreaCodeSheet.value = false
-}
 
 // 生成UUID
 function generateUUID() {
@@ -140,82 +88,12 @@ async function refreshCaptcha() {
   captchaImage.value = `${getEnvBaseUrl()}/user/captcha?uuid=${uuid}&t=${Date.now()}`;
 }
 
-// 发送短信验证码
-async function sendSmsVerification() {
-  if (!formData.value.mobile) {
-    toast.warning(t('register.enterPhone'))
-    return
-  }
-  if (!formData.value.captcha) {
-    toast.warning(t('register.enterCode'))
-    return
-  }
-
-  // 手机号格式验证
-  const phoneRegex = /^1[3-9]\d{9}$/
-  if (!phoneRegex.test(formData.value.mobile)) {
-    toast.warning(t('register.enterPhone'))
-    return
-  }
-
-  try {
-    smsLoading.value = true
-    await sendSmsCode({
-      phone: `${selectedAreaCode.value}${formData.value.mobile}`,
-      captcha: formData.value.captcha,
-      captchaId: formData.value.captchaId,
-    })
-
-    toast.success(t('register.captchaSendSuccess'))
-
-    // 开始倒计时
-    smsCountdown.value = 60
-    const timer = setInterval(() => {
-      smsCountdown.value--
-      if (smsCountdown.value <= 0) {
-        clearInterval(timer)
-      }
-    }, 1000)
-  }
-  catch (error: any) {
-    // 处理验证码错误 - 从error.message中解析错误码
-    if (error.message.includes('请求错误[10067]')) {
-      toast.warning(t('login.captchaError'))
-    }
-    // 发送失败重新获取图形验证码
-    refreshCaptcha()
-  }
-  finally {
-    smsLoading.value = false
-  }
-}
-
 // 注册
 async function handleRegister() {
-  // 表单验证
-  if (enableMobileRegister.value) {
-    // 手机号注册验证
-    if (!formData.value.mobile) {
-      toast.warning(t('register.enterPhone'))
-      return
-    }
-    // 手机号格式验证
-    const phoneRegex = /^1[3-9]\d{9}$/
-    if (!phoneRegex.test(formData.value.mobile)) {
-      toast.warning(t('register.enterPhone'))
-      return
-    }
-    if (!formData.value.mobileCaptcha) {
-      toast.warning(t('register.enterCode'))
-      return
-    }
-  }
-  else {
     // 用户名注册验证
     if (!formData.value.username) {
       toast.warning(t('register.enterUsername'))
       return
-    }
   }
 
   if (!formData.value.password) {
@@ -261,12 +139,9 @@ async function handleRegister() {
 
     // 构建注册数据
     const registerData = {
-      username: enableMobileRegister.value ? `${selectedAreaCode.value}${formData.value.mobile}` : formData.value.username,
+      username: formData.value.username,
       password: encryptedPassword,
-      captchaId: formData.value.captchaId,
-      areaCode: formData.value.areaCode,
-      mobile: formData.value.mobile,
-      mobileCaptcha: formData.value.mobileCaptcha,
+      captchaId: formData.value.captchaId
     }
 
     await register(registerData)
@@ -283,10 +158,6 @@ async function handleRegister() {
     // 处理验证码错误 - 从error.message中解析错误码
     if (error.message.includes('请求错误[10067]')) {
       toast.warning(t('login.captchaError'))
-    }
-    // 处理手机号码已注册错误
-    else if (error.message.includes('请求错误[10070]')) {
-      toast.warning(t('message.phoneRegistered'))
     }
     // 注册失败重新获取验证码
     refreshCaptcha()
@@ -344,32 +215,7 @@ onMounted(async () => {
 
     <view class="form-container">
       <view class="form">
-        <!-- 手机号注册 -->
-        <template v-if="enableMobileRegister">
-          <view class="input-group">
-            <view class="input-wrapper mobile-wrapper">
-              <view class="area-code-selector" @click="openAreaCodeSheet">
-                <text class="area-code-text">
-                  {{ selectedAreaCode }}
-                </text>
-                <wd-icon name="arrow-down" custom-class="area-code-arrow" />
-              </view>
-              <view class="mobile-input-wrapper">
-                <wd-input
-                  v-model="formData.mobile"
-                  custom-class="styled-input"
-                  no-border
-                  :placeholder="t('register.enterPhone')"
-                  type="number"
-                  :maxlength="11"
-                />
-              </view>
-            </view>
-          </view>
-        </template>
-
         <!-- 用户名注册 -->
-        <template v-else>
           <view class="input-group">
             <view class="input-wrapper">
               <wd-input
@@ -380,7 +226,6 @@ onMounted(async () => {
               />
             </view>
           </view>
-        </template>
 
         <view class="input-group">
           <view class="input-wrapper">
@@ -423,27 +268,6 @@ onMounted(async () => {
           </view>
         </view>
 
-        <!-- 手机验证码输入框 -->
-        <view v-if="enableMobileRegister" class="input-group">
-          <view class="input-wrapper sms-wrapper">
-            <wd-input
-                v-model="formData.mobileCaptcha"
-                custom-class="styled-input"
-                no-border
-                :placeholder="t('register.enterCode')"
-                type="number"
-                :maxlength="6"
-              />
-              <wd-button
-                :loading="smsLoading"
-                :disabled="smsCountdown > 0"
-                custom-class="sms-btn"
-                @click="sendSmsVerification"
-              >
-                {{ smsCountdown > 0 ? `${smsCountdown}s` : t('register.getCode') }}
-              </wd-button>
-          </view>
-        </view>
 
         <view
           class="register-btn"
@@ -466,48 +290,6 @@ onMounted(async () => {
       </view>
     </view>
 
-    <!-- 区号选择弹窗 -->
-    <wd-action-sheet
-      v-model="showAreaCodeSheet"
-      :title="t('register.selectCountry')"
-      :close-on-click-modal="true"
-      @close="closeAreaCodeSheet"
-    >
-      <view class="area-code-sheet">
-        <scroll-view scroll-y class="area-code-list">
-          <view
-            v-for="item in areaCodeList"
-            :key="item.key"
-            class="area-code-item"
-            :class="{ selected: selectedAreaCode === item.key }"
-            @click="selectAreaCode(item)"
-          >
-            <view class="area-info">
-              <text class="area-name">
-                {{ item.name }}
-              </text>
-              <text class="area-code">
-                {{ item.key }}
-              </text>
-            </view>
-            <wd-icon
-              v-if="selectedAreaCode === item.key"
-              name="check"
-              custom-class="check-icon"
-            />
-          </view>
-        </scroll-view>
-        <view class="sheet-footer">
-          <wd-button
-            type="primary"
-            custom-class="confirm-btn"
-            @click="closeAreaCodeSheet"
-          >
-            {{ t('register.confirm') }}
-          </wd-button>
-        </view>
-      </view>
-    </wd-action-sheet>
 
 
   </view>

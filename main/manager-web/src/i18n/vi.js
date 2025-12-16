@@ -276,7 +276,7 @@ export default {
 
   // Register page related
   'register.title': 'Tạo tài khoản',
-  'register.welcome': 'Chào mừng đến với PingPing AI',
+  'register.welcome': 'Chào mừng đến với The Otter School',
   'register.usernamePlaceholder': 'Vui lòng nhập tên đăng nhập',
   'register.mobilePlaceholder': 'Vui lòng nhập số điện thoại di động',
   'register.captchaPlaceholder': 'Vui lòng nhập mã xác minh',
@@ -467,6 +467,16 @@ export default {
   'chatHistory.downloadCurrentSession': 'Tải xuống lịch sử trò chuyện phiên hiện tại',
   'chatHistory.downloadCurrentWithPreviousSessions': 'Tải xuống lịch sử trò chuyện phiên hiện tại và 20 phiên trước',
   'chatHistory.downloadLinkFailed': 'Không thể lấy liên kết tải xuống',
+  'chatHistory.deleteSession': 'Xóa phiên',
+  'chatHistory.deleteMessage': 'Xóa tin nhắn',
+  'chatHistory.confirmDeleteSession': 'Bạn có chắc chắn muốn xóa phiên này không? Tất cả tin nhắn trong phiên này sẽ bị xóa vĩnh viễn.',
+  'chatHistory.confirmDeleteMessage': 'Bạn có chắc chắn muốn xóa tin nhắn này không?',
+  'chatHistory.deleteSessionSuccess': 'Xóa phiên thành công',
+  'chatHistory.deleteSessionFailed': 'Xóa phiên thất bại',
+  'chatHistory.deleteMessageSuccess': 'Xóa tin nhắn thành công',
+  'chatHistory.deleteMessageFailed': 'Xóa tin nhắn thất bại',
+  'chatHistory.messageIdMissing': 'Thiếu ID tin nhắn',
+  'chatHistory.warning': 'Cảnh báo',
 
   'cache.status': 'Trạng thái cache',
   'cache.cdnEnabled': 'Đã bật chế độ CDN',
@@ -512,7 +522,7 @@ export default {
   'button.close': 'Đóng',
 
   // System information
-  'system.name': 'Dịch vụ PingPing',
+  'system.name': 'The Otter School',
 
   // Voiceprint related
   'voiceprint.management': 'Quản lý dấu giọng nói',
@@ -644,7 +654,7 @@ export default {
 
   // Home page text
   'home.addAgent': 'Thêm tác nhân',
-  'home.greeting': 'Tạo Pingpings mới tại đây!',
+  'home.greeting': 'Tạo Otters mới tại đây!',
   'home.wish': 'Chúc bạn một ngày tuyệt vời!',
   'home.languageModel': 'LLM',
   'home.voiceModel': 'TTS',

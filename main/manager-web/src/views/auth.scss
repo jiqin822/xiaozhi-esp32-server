@@ -6,6 +6,40 @@ $breakpoint-tablet: 768px;
 $breakpoint-desktop: 992px;
 $breakpoint-large: 1200px;
 
+// Header styles for login/register/retrieve password pages
+.login-header {
+  height: 80px !important;
+  min-height: 80px;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.header-logo-container {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  margin-left: 10px;
+  gap: 10px;
+  height: 100%;
+  max-height: 80px;
+}
+
+.header-logo-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.header-brand-img {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .welcome {
   // Remove fixed min-width for mobile support
   min-height: 100vh;

@@ -1,6 +1,6 @@
 <template>
   <el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" width="57%" center custom-class="custom-dialog"
-    :show-close="false" class="center-dialog">
+    :show-close="false" class="center-dialog" :append-to-body="true" :modal-append-to-body="false" :modal="true" style="z-index: 2001;">
     <div style="margin: 0 18px; text-align: left; padding: 10px; border-radius: 10px">
       <div style="
           font-size: 30px;
@@ -92,6 +92,7 @@
               <template v-if="field.type === 'json-textarea'">
                 <el-input v-model="fieldJsonMap[field.prop]" type="textarea" :rows="3"
                   :placeholder="$t('modelConfigDialog.enterJsonExample')" class="custom-input-bg"
+                  :disabled="field.editable === false"
                   @change="(val) => handleJsonChange(field.prop, val)" @focus="
                     isSensitiveField(field.prop)
                       ? handleJsonInputFocus(field.prop, fieldJsonMap[field.prop])
@@ -104,7 +105,8 @@
               </template>
 
               <el-input v-else v-model="form.configJson[field.prop]" :placeholder="field.placeholder" :type="field.type"
-                class="custom-input-bg" :show-password="field.type === 'password'" @focus="
+                class="custom-input-bg" :show-password="field.type === 'password'" :disabled="field.editable === false"
+                @focus="
                   isSensitiveField(field.prop)
                     ? handleInputFocus(field.prop, form.configJson[field.prop])
                     : undefined
@@ -331,6 +333,7 @@ export default {
                   ? "password"
                   : "text",
             placeholder: `请输入${f.key}`,
+            editable: f.editable !== false, // Default to true if not specified
           }));
 
           if (this.pendingModelData && this.pendingProviderType === providerCode) {
@@ -345,7 +348,8 @@ export default {
       let configJson = model.configJson || {};
       this.dynamicCallInfoFields.forEach((field) => {
         if (!configJson.hasOwnProperty(field.prop)) {
-          configJson[field.prop] = "";
+          // Use Vue.set to ensure reactivity for new properties
+          this.$set(configJson, field.prop, "");
         } else if (field.type === "json-textarea") {
           this.$set(
             this.fieldJsonMap,
@@ -354,7 +358,19 @@ export default {
           );
           configJson[field.prop] = this.ensureObject(configJson[field.prop]);
         } else if (typeof configJson[field.prop] !== "string") {
-          configJson[field.prop] = String(configJson[field.prop]);
+          this.$set(configJson, field.prop, String(configJson[field.prop]));
+        }
+      });
+
+      // Ensure all fields are reactive by using Vue.set
+      const reactiveConfigJson = {};
+      this.dynamicCallInfoFields.forEach((field) => {
+        this.$set(reactiveConfigJson, field.prop, configJson[field.prop] || "");
+      });
+      // Also include any other properties that might exist in configJson
+      Object.keys(configJson).forEach((key) => {
+        if (!reactiveConfigJson.hasOwnProperty(key)) {
+          this.$set(reactiveConfigJson, key, configJson[key]);
         }
       });
 
@@ -368,7 +384,7 @@ export default {
         docLink: model.docLink,
         remark: model.remark,
         sort: Number(model.sort) || 0,
-        configJson: { ...configJson },
+        configJson: reactiveConfigJson,
       };
     },
     handleJsonChange(field, value) {
@@ -480,12 +496,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .el-dialog__wrapper {
+  pointer-events: auto !important;
+  z-index: 2001 !important;
+}
+
+::v-deep .v-modal {
+  z-index: 2000 !important;
+}
+
+::v-deep .el-dialog {
+  pointer-events: auto !important;
+  z-index: 2001 !important;
+}
+
+::v-deep .el-dialog__body {
+  pointer-events: auto !important;
+}
+
+::v-deep .el-input,
+::v-deep .el-textarea,
+::v-deep .el-select {
+  pointer-events: auto !important;
+}
+
 .custom-dialog {
   position: relative;
   border-radius: 20px;
   overflow: hidden;
   background: white;
   padding-bottom: 17px;
+  pointer-events: auto !important;
 }
 
 .custom-dialog .el-dialog__header {

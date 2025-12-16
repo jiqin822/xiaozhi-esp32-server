@@ -269,18 +269,29 @@ function uploadFile<T>({
   onComplete,
 }: UploadFileOptions<T>) {
   try {
+    // 获取认证token
+    const token = uni.getStorageSync('token')
+    
+    // 构建请求头
+    const headers: Record<string, string> = {
+      // H5环境下不需要手动设置Content-Type，让浏览器自动处理multipart格式
+      // #ifndef H5
+      'Content-Type': 'multipart/form-data',
+      // #endif
+    }
+    
+    // 如果有token，添加Authorization头
+    if (token) {
+      headers.Authorization = `Bearer ${token}`
+    }
+    
     // 创建上传任务
     const uploadTask = uni.uploadFile({
       url,
       filePath: tempFilePath,
       name: 'file', // 文件对应的 key
       formData,
-      header: {
-        // H5环境下不需要手动设置Content-Type，让浏览器自动处理multipart格式
-        // #ifndef H5
-        'Content-Type': 'multipart/form-data',
-        // #endif
-      },
+      header: headers,
       // 确保文件名称合法
       success: (uploadFileRes) => {
         console.log('上传文件成功:', uploadFileRes)

@@ -118,6 +118,7 @@ public interface ErrorCode {
     int VOICEPRINT_UNREGISTER_REQUEST_ERROR = 10089; // 声纹注销请求失败
     int VOICEPRINT_UNREGISTER_PROCESS_ERROR = 10090; // 声纹注销处理失败
     int VOICEPRINT_IDENTIFY_REQUEST_ERROR = 10091; // 声纹识别请求失败
+    int VOICEPRINT_AUDIO_UPLOAD_FAILED = 10092; // 声纹音频上传失败
 
     int LLM_NOT_EXIST = 10092; // 设置的LLM不存在
     int MODEL_REFERENCED_BY_AGENT = 10093; // 该模型配置已被智能体引用，无法删除

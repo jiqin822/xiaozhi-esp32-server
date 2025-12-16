@@ -1026,6 +1026,55 @@ TTS:
     api_secret: 你的api_secret
     api_key: 你的api_key
     voice: x5_lingxiaoxuan_flow
+  ChatterboxTTS:
+    # Resemble AI Chatterbox TTS - SoTA open-source TTS supporting 23 languages
+    # GitHub: https://github.com/resemble-ai/chatterbox
+    # Install: pip install chatterbox-tts
+    # Supports zero-shot voice cloning and emotion/exaggeration control
+    type: chatterbox
+    # Device: "cuda" for GPU or "cpu" for CPU
+    device: cuda
+    # Model type: "english" for English-only or "multilingual" for 23 languages
+    model_type: multilingual
+    # Language ID for multilingual model (required if model_type is multilingual)
+    # Supported languages: ar, da, de, el, en, es, fi, fr, he, hi, it, ja, ko, ms, nl, no, pl, pt, ru, sv, sw, tr, zh
+    language_id: en
+    # Optional: Path to reference audio file for zero-shot voice cloning
+    # audio_prompt_path: path/to/reference_voice.wav
+    # Emotion/exaggeration control (0.0 to 1.0, default 0.5)
+    exaggeration: 0.5
+    # CFG weight for guidance (0.0 to 1.0, default 0.5)
+    cfg_weight: 0.5
+    # Sample rate (default 24000)
+    sample_rate: 24000
+    output_dir: tmp/
+  CoquiTTS:
+    # Coqui TTS - Open-source TTS library with many pre-trained models
+    # GitHub: https://github.com/coqui-ai/TTS
+    # Install: pip install TTS
+    # List available models: tts --list_models
+    # Supports multi-speaker models and multilingual models
+    type: coqui
+    # Device: "cuda" for GPU or "cpu" for CPU
+    device: cuda
+    # Model name (e.g., "tts_models/en/ljspeech/tacotron2-DDC")
+    # Popular models:
+    #   - tts_models/en/ljspeech/tacotron2-DDC (English, single speaker)
+    #   - tts_models/en/vctk/vits (English, multi-speaker)
+    #   - tts_models/multilingual/multi-dataset/your_tts (Multilingual, multi-speaker)
+    #   - tts_models/zh-CN/baker/tacotron2-DDC-GST (Chinese)
+    #   - tts_models/de/thorsten/tacotron2-DDC (German)
+    #   - tts_models/fr/mai/tacotron2-DDC (French)
+    #   - tts_models/es/mai/tacotron2-DDC (Spanish)
+    #   - tts_models/ja/kokoro/tacotron2-DDC (Japanese)
+    # See https://github.com/coqui-ai/TTS/blob/dev/TTS/.models.json for full list
+    model_name: tts_models/en/ljspeech/tacotron2-DDC
+    # Optional: Speaker ID for multi-speaker models (e.g., "p225", "p226")
+    # speaker_id: p225
+    # Optional: Language code for multilingual models (e.g., "en", "zh", "de", "fr", "es", "ja")
+    # language: en
+    # Sample rate (default 22050, but depends on model)
+    sample_rate: 22050
     output_dir: tmp/
     # 以下可不用设置，使用默认设置，注意V5音色不支持口语化配置
     # oral_level: mid  # 口语化等级：high, mid, low

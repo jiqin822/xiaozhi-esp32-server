@@ -71,4 +71,20 @@ public interface AgentChatHistoryService extends IService<AgentChatHistoryEntity
      * @return T：属于 F：不属于
      */
     boolean isAudioOwnedByAgent(String audioId,String agentId);
+
+    /**
+     * 根据消息ID删除聊天记录
+     *
+     * @param id 消息ID
+     * @param agentId 智能体ID（用于权限验证）
+     */
+    void deleteById(Long id, String agentId);
+
+    /**
+     * 根据会话ID删除聊天记录
+     *
+     * @param agentId 智能体ID
+     * @param sessionId 会话ID
+     */
+    void deleteBySessionId(String agentId, String sessionId);
 }

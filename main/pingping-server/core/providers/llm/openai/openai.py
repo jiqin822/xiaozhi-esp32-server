@@ -141,10 +141,16 @@ class LLMProvider(LLMProviderBase):
                     )
 
         except Exception as e:
-            logger.bind(tag=TAG).error(f"Error in function call streaming: {e}")
             # Safely encode exception message to avoid encoding errors
             try:
                 error_msg = str(e)
+                # Ensure error message is UTF-8 encoded
+                if isinstance(error_msg, str):
+                    error_msg = error_msg.encode('utf-8', errors='ignore').decode('utf-8', errors='replace')
             except (UnicodeEncodeError, UnicodeDecodeError):
+                try:
                 error_msg = repr(e)
+                except Exception:
+                    error_msg = "Unknown error"
+            logger.bind(tag=TAG).error(f"Error in function call streaming: {error_msg}")
             yield f"[OpenAI service response error: {error_msg}]", None

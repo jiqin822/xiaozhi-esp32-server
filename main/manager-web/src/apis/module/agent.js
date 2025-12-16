@@ -146,6 +146,36 @@ export default {
                 });
             }).send();
     },
+    // 删除智能体聊天记录会话
+    deleteChatHistorySession(agentId, sessionId, callback) {
+        RequestService.sendRequest()
+            .url(`${getServiceUrl()}/agent/${agentId}/chat-history/session/${sessionId}`)
+            .method('DELETE')
+            .success((res) => {
+                RequestService.clearRequestTime();
+                callback(res);
+            })
+            .networkFail(() => {
+                RequestService.reAjaxFun(() => {
+                    this.deleteChatHistorySession(agentId, sessionId, callback);
+                });
+            }).send();
+    },
+    // 删除智能体聊天记录消息
+    deleteChatHistoryMessage(agentId, messageId, callback) {
+        RequestService.sendRequest()
+            .url(`${getServiceUrl()}/agent/${agentId}/chat-history/message/${messageId}`)
+            .method('DELETE')
+            .success((res) => {
+                RequestService.clearRequestTime();
+                callback(res);
+            })
+            .networkFail(() => {
+                RequestService.reAjaxFun(() => {
+                    this.deleteChatHistoryMessage(agentId, messageId, callback);
+                });
+            }).send();
+    },
     // 获取音频下载ID
     getAudioId(audioId, callback) {
         RequestService.sendRequest()
