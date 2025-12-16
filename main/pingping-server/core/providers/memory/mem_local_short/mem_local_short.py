@@ -150,7 +150,7 @@ class MemoryProvider(MemoryProviderBase):
                 else:
                     all_memory = {}
         if self.role_id:
-            all_memory[self.role_id] = self.short_memory
+        all_memory[self.role_id] = self.short_memory
         with open(self.memory_path, "w", encoding="utf-8") as f:
             yaml.dump(all_memory, f, allow_unicode=True)
 
